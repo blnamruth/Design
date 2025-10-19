@@ -1,0 +1,4776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NewsGuard Verification Platform</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary-color: #1a3a5f;
+            --secondary-color: #2c5282;
+            --accent-color: #3182ce;
+            --danger-color: #e53e3e;
+            --warning-color: #dd6b20;
+            --success-color: #38a169;
+            --light-bg: #f7fafc;
+            --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+            --sidebar-width: 250px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-bg);
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        /* Login Page Styles */
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            padding: 20px;
+        }
+
+        .login-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 450px;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .login-logo {
+            margin-bottom: 20px;
+            color: var(--primary-color);
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .login-subtitle {
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .form-control {
+            border-radius: 8px;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            margin-bottom: 15px;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.2);
+        }
+
+        .btn-login {
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px;
+            font-weight: bold;
+            width: 100%;
+            margin-top: 10px;
+            transition: var(--transition);
+        }
+
+        .btn-login:hover {
+            background: var(--secondary-color);
+        }
+
+        .login-options {
+            display: flex;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #ddd;
+        }
+
+        .login-option {
+            flex: 1;
+            padding: 12px;
+            background: #f9f9f9;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+        }
+
+        .login-option.active {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        .login-option:first-child {
+            border-right: 1px solid #ddd;
+        }
+
+        .admin-link {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .admin-link a {
+            color: white;
+            text-decoration: underline;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        .admin-link a:hover {
+            text-decoration: none;
+        }
+
+        .switch-role-link {
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        .switch-role-link a {
+            color: white;
+            text-decoration: underline;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        .switch-role-link a:hover {
+            text-decoration: none;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: var(--sidebar-width);
+            background: var(--primary-color);
+            color: white;
+            padding: 20px 0;
+            z-index: 1000;
+            transform: translateX(0);
+            transition: var(--transition);
+        }
+
+        .sidebar.collapsed {
+            transform: translateX(-100%);
+        }
+
+        .sidebar-header {
+            padding: 0 20px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .sidebar-logo i {
+            margin-right: 10px;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .sidebar-item {
+            margin-bottom: 5px;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .sidebar-link:hover, .sidebar-link.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .sidebar-link i {
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+
+        .sidebar-footer {
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            right: 0;
+            padding: 0 20px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+        }
+
+        .user-details {
+            flex: 1;
+        }
+
+        .user-name {
+            font-weight: bold;
+            margin-bottom: 2px;
+        }
+
+        .user-role {
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            transition: var(--transition);
+        }
+
+        .main-content.expanded {
+            margin-left: 0;
+        }
+
+        .top-bar {
+            background: white;
+            box-shadow: var(--card-shadow);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .menu-toggle {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            cursor: pointer;
+            margin-right: 15px;
+        }
+
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .top-bar-actions {
+            display: flex;
+            align-items: center;
+        }
+
+        .notification-bell {
+            position: relative;
+            margin-right: 15px;
+            font-size: 1.2rem;
+            color: #666;
+            cursor: pointer;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--danger-color);
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+        }
+
+        .content-area {
+            padding: 30px;
+        }
+
+        /* Dashboard Styles */
+        .welcome-message {
+            margin-bottom: 25px;
+        }
+
+        .welcome-message h2 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .metrics-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .metric-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: var(--card-shadow);
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .metric-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+
+        .metric-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .dashboard-sections {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+        }
+
+        .section-card {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            color: var(--primary-color);
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .quick-actions {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .btn-action {
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            border: none;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .btn-primary-action {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        .btn-primary-action:hover {
+            background: var(--secondary-color);
+        }
+
+        .btn-secondary-action {
+            background: white;
+            color: var(--accent-color);
+            border: 1px solid var(--accent-color);
+        }
+
+        .btn-secondary-action:hover {
+            background: var(--light-bg);
+        }
+
+        .task-item {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid;
+            background: #f9f9f9;
+        }
+
+        .task-high {
+            border-left-color: var(--danger-color);
+        }
+
+        .task-medium {
+            border-left-color: var(--warning-color);
+        }
+
+        .task-low {
+            border-left-color: var(--success-color);
+        }
+
+        .task-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .task-meta {
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .btn-task {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-task-action {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        .btn-task-action:hover {
+            background: var(--secondary-color);
+        }
+
+        .activity-item {
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-text {
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+
+        .activity-time {
+            font-size: 0.8rem;
+            color: #999;
+        }
+
+        /* Team Update Styles */
+        .team-update-item {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            background: #f9f9f9;
+            transition: var(--transition);
+        }
+
+        .team-update-item:hover {
+            background: #f0f0f0;
+        }
+
+        .team-update-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .team-update-content {
+            flex: 1;
+        }
+
+        .team-update-text {
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+
+        .team-update-subtext {
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .team-update-time {
+            font-size: 0.8rem;
+            color: #999;
+        }
+
+        .team-update-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .thumbs-up-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: #666;
+            transition: var(--transition);
+            padding: 5px 10px;
+            border-radius: 20px;
+        }
+
+        .thumbs-up-btn:hover {
+            background: #e0e0e0;
+        }
+
+        .thumbs-up-btn.liked {
+            color: var(--success-color);
+            background: #e6fffa;
+        }
+
+        .thumbs-up-btn i {
+            font-size: 1.2rem;
+        }
+
+        .thumbs-count {
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        /* Page Styles */
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        /* Stories Page */
+        .stories-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background: white;
+            border-radius: 8px;
+            padding: 10px 15px;
+            box-shadow: var(--card-shadow);
+            width: 300px;
+        }
+
+        .search-bar input {
+            border: none;
+            outline: none;
+            flex: 1;
+            margin-left: 10px;
+        }
+
+        .filter-dropdown {
+            background: white;
+            border-radius: 8px;
+            padding: 10px 15px;
+            box-shadow: var(--card-shadow);
+            border: none;
+            margin-left: 15px;
+        }
+
+        .stories-list {
+            display: grid;
+            gap: 20px;
+        }
+
+        .story-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: var(--card-shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .story-info {
+            flex: 1;
+        }
+
+        .story-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+
+        .story-meta {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .story-description {
+            margin-bottom: 15px;
+            color: #555;
+        }
+
+        .story-status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .status-draft {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+
+        .status-review {
+            background: #fbd38d;
+            color: #744210;
+        }
+
+        .status-published {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .status-internal-review {
+            background: #e9d8fd;
+            color: #553c9a;
+        }
+
+        .story-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-story {
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-edit {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        .btn-edit:hover {
+            background: var(--secondary-color);
+        }
+
+        .btn-view {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-view:hover {
+            background: #e0e0e0;
+        }
+
+        .btn-status {
+            background: var(--success-color);
+            color: white;
+        }
+
+        .btn-status:hover {
+            background: #2f855a;
+        }
+
+        /* Story Detail Page */
+        .story-detail-header {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 30px;
+        }
+
+        .story-detail-title {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        .story-detail-meta {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .story-detail-description {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .story-trust-score {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px;
+            background: #f0f7ff;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .trust-score-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--success-color);
+        }
+
+        .trust-score-label {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        /* Evidence Section */
+        .evidence-section {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 30px;
+        }
+
+        .evidence-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .evidence-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .upload-area {
+            border: 2px dashed #ddd;
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 30px;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .upload-area:hover {
+            border-color: var(--accent-color);
+            background: #f9f9f9;
+        }
+
+        .upload-area.dragover {
+            border-color: var(--accent-color);
+            background: #f0f7ff;
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            color: #ddd;
+            margin-bottom: 15px;
+        }
+
+        .upload-text {
+            margin-bottom: 15px;
+            color: #666;
+        }
+
+        .btn-upload {
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-upload:hover {
+            background: var(--secondary-color);
+        }
+
+        .evidence-list {
+            display: grid;
+            gap: 20px;
+        }
+
+        .evidence-item {
+            background: #f9f9f9;
+            border-radius: 10px;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: var(--transition);
+        }
+
+        .evidence-item:hover {
+            background: #f0f0f0;
+        }
+
+        .evidence-info {
+            display: flex;
+            align-items: center;
+            flex: 1;
+        }
+
+        .evidence-icon {
+            font-size: 2rem;
+            margin-right: 15px;
+            color: var(--accent-color);
+        }
+
+        .evidence-details h4 {
+            margin-bottom: 5px;
+            color: var(--primary-color);
+        }
+
+        .evidence-meta {
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .evidence-metadata {
+            font-size: 0.8rem;
+            color: #888;
+            margin-bottom: 5px;
+        }
+
+        .evidence-trust-score {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .trust-score-high {
+            color: var(--success-color);
+        }
+
+        .trust-score-medium {
+            color: var(--warning-color);
+        }
+
+        .trust-score-low {
+            color: var(--danger-color);
+        }
+
+        .evidence-status {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .status-unverified {
+            background: #ffebee;
+            color: var(--danger-color);
+        }
+
+        .status-pending {
+            background: #fff8e1;
+            color: var(--warning-color);
+        }
+
+        .status-verified {
+            background: #e6fffa;
+            color: var(--success-color);
+        }
+
+        .evidence-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-evidence {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-verify {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        .btn-verify:hover {
+            background: var(--secondary-color);
+        }
+
+        .btn-view {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-view:hover {
+            background: #e0e0e0;
+        }
+
+        .btn-delete {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background: #c53030;
+        }
+
+        /* Editor Review Page */
+        .review-filters {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .filter-chip {
+            padding: 8px 15px;
+            border-radius: 20px;
+            background: white;
+            border: 1px solid #ddd;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .filter-chip.active {
+            background: var(--accent-color);
+            color: white;
+            border-color: var(--accent-color);
+        }
+
+        .review-list {
+            display: grid;
+            gap: 20px;
+        }
+
+        .review-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: var(--card-shadow);
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .review-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .review-priority {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .priority-high {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+
+        .priority-medium {
+            background: #feebc8;
+            color: #7c2d12;
+        }
+
+        .priority-low {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .review-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .review-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-approve {
+            background: var(--success-color);
+            color: white;
+        }
+
+        .btn-approve:hover {
+            background: #2f855a;
+        }
+
+        .btn-reject {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        .btn-reject:hover {
+            background: #c53030;
+        }
+
+        .btn-request-changes {
+            background: var(--warning-color);
+            color: white;
+        }
+
+        .btn-request-changes:hover {
+            background: #c05621;
+        }
+
+        /* Status Change Modal */
+        .status-change-modal {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .status-change-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        .status-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .status-option {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .status-option:hover {
+            background: #f0f0f0;
+        }
+
+        .status-option input {
+            margin-right: 10px;
+        }
+
+        .status-reason {
+            margin-bottom: 15px;
+        }
+
+        /* Verification Queue Page */
+        .verification-filters {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .verification-list {
+            display: grid;
+            gap: 20px;
+        }
+
+        .verification-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: var(--card-shadow);
+        }
+
+        .verification-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .verification-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .verification-priority {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .verification-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .verification-progress {
+            margin-bottom: 15px;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--accent-color);
+            transition: width 1s ease;
+        }
+
+        .verification-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        /* Admin Page */
+        .admin-tabs {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 25px;
+        }
+
+        .admin-tab {
+            padding: 12px 20px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: var(--transition);
+        }
+
+        .admin-tab:hover {
+            background: #f9f9f9;
+        }
+
+        .admin-tab.active {
+            border-bottom-color: var(--accent-color);
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .users-table {
+            width: 100%;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+        }
+
+        .users-table thead {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .users-table th, .users-table td {
+            padding: 15px;
+            text-align: left;
+        }
+
+        .users-table tbody tr {
+            border-bottom: 1px solid #eee;
+        }
+
+        .users-table tbody tr:hover {
+            background: #f9f9f9;
+        }
+
+        .user-status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .status-active {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .status-inactive {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+
+        .btn-user {
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-right: 5px;
+        }
+
+        .btn-edit-user {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        .btn-edit-user:hover {
+            background: var(--secondary-color);
+        }
+
+        .btn-delete-user {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        .btn-delete-user:hover {
+            background: #c53030;
+        }
+
+        .add-user-btn {
+            background: var(--success-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-bottom: 20px;
+        }
+
+        .add-user-btn:hover {
+            background: #2f855a;
+        }
+
+        /* Notification Dropdown */
+        .notification-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            width: 350px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            display: none;
+            overflow: hidden;
+        }
+
+        .notification-dropdown.show {
+            display: block;
+        }
+
+        .notification-header {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .notification-title {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .mark-all-read {
+            font-size: 0.9rem;
+            color: var(--accent-color);
+            cursor: pointer;
+        }
+
+        .notification-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .notification-item {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            transition: var(--transition);
+        }
+
+        .notification-item:hover {
+            background: #f9f9f9;
+        }
+
+        .notification-item.unread {
+            background: #f0f7ff;
+        }
+
+        .notification-content {
+            margin-bottom: 5px;
+        }
+
+        .notification-time {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .notification-footer {
+            padding: 10px 15px;
+            text-align: center;
+            border-top: 1px solid #eee;
+        }
+
+        .view-all {
+            color: var(--accent-color);
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 10px;
+            max-width: 900px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 30px;
+            position: relative;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .modal-title {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+
+        .btn-modal {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-cancel {
+            background: #ddd;
+            color: #333;
+        }
+
+        .btn-cancel:hover {
+            background: #ccc;
+        }
+
+        .btn-save {
+            background: var(--success-color);
+            color: white;
+        }
+
+        .btn-save:hover {
+            background: #2f855a;
+        }
+
+        /* Investigation Modal Styles */
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .step {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 10px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .step.active {
+            background: var(--accent-color);
+        }
+
+        .step.completed {
+            background: var(--success-color);
+        }
+
+        .step-connector {
+            width: 50px;
+            height: 2px;
+            background: #ddd;
+            margin-top: 15px;
+        }
+
+        .step-connector.completed {
+            background: var(--success-color);
+        }
+
+        .form-step {
+            display: none;
+        }
+
+        .form-step.active {
+            display: block;
+        }
+
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .radio-option:hover {
+            background: #f9f9f9;
+        }
+
+        .radio-option input {
+            margin-right: 10px;
+        }
+
+        .risk-alert {
+            background: #fff8e1;
+            border-left: 4px solid var(--warning-color);
+            padding: 15px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 20px;
+        }
+
+        .risk-high {
+            background: #ffebee;
+            border-left-color: var(--danger-color);
+        }
+
+        .risk-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: var(--danger-color);
+        }
+
+        .risk-description {
+            margin-bottom: 15px;
+        }
+
+        .risk-recommendations {
+            margin-bottom: 15px;
+        }
+
+        .risk-recommendations ul {
+            padding-left: 20px;
+        }
+
+        .risk-recommendations li {
+            margin-bottom: 5px;
+        }
+
+        /* File input styling */
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+
+        .file-input-wrapper input[type=file] {
+            position: absolute;
+            left: -9999px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.show {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .dashboard-sections {
+                grid-template-columns: 1fr;
+            }
+            
+            .metrics-cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .quick-actions {
+                flex-direction: column;
+            }
+            
+            .stories-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .search-bar {
+                width: 100%;
+            }
+            
+            .verification-details {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-content {
+                width: 95%;
+                padding: 20px;
+            }
+
+            .story-card {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .story-actions {
+                margin-top: 15px;
+                width: 100%;
+            }
+
+            .evidence-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .evidence-actions {
+                margin-top: 15px;
+                width: 100%;
+            }
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border-left-color: var(--accent-color);
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Alert Messages */
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .alert-success {
+            background: #e6fffa;
+            color: var(--success-color);
+            border-left: 4px solid var(--success-color);
+        }
+
+        .alert-warning {
+            background: #fff8e1;
+            color: var(--warning-color);
+            border-left: 4px solid var(--warning-color);
+        }
+
+        .alert-danger {
+            background: #ffebee;
+            color: var(--danger-color);
+            border-left: 4px solid var(--danger-color);
+        }
+
+        .alert-info {
+            background: #e6f7ff;
+            color: var(--accent-color);
+            border-left: 4px solid var(--accent-color);
+        }
+
+        /* Animations */
+        .fade-in {
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .slide-up {
+            animation: slideUp 0.5s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Page -->
+    <div class="login-container" id="loginPage">
+        <div class="login-card fade-in">
+            <div class="login-logo">
+                <i class="bi bi-shield-check"></i> NewsGuard
+            </div>
+            <div class="login-subtitle">Secure Evidence-Based Journalism</div>
+            
+            <div class="login-options">
+                <button class="login-option active" data-role="journalist">Journalist</button>
+                <button class="login-option" data-role="editor">Editor</button>
+            </div>
+            
+            <form id="loginForm">
+                <div class="form-group">
+                    <input type="email" class="form-control" id="email" placeholder="Email Address" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" class="form-control" id="password" placeholder="Password" required>
+                </div>
+                <div class="form-group text-start">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="rememberMe">
+                        <label class="form-check-label" for="rememberMe">
+                            Remember me for 30 days
+                        </label>
+                    </div>
+                </div>
+                <button type="submit" class="btn-login">Sign In</button>
+                <div class="mt-3">
+                    <a href="#" class="text-decoration-none">Forgot password?</a> • 
+                    <a href="#" class="text-decoration-none">Need help?</a>
+                </div>
+            </form>
+            
+            <div class="admin-link">
+                <a href="#" id="adminLink">Admin Settings</a>
+            </div>
+            
+            <div class="switch-role-link">
+                <a href="#" id="switchRoleLink">Switch Role</a>
+            </div>
+            
+            <div class="mt-4 text-muted small">
+                Protected by enterprise-grade encryption
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Application -->
+    <div class="app-container" id="appContainer" style="display: none;">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <i class="bi bi-shield-check"></i> NewsGuard
+                </div>
+            </div>
+            
+            <ul class="sidebar-menu">
+                <li class="sidebar-item">
+                    <a href="#" class="sidebar-link active" data-page="dashboard">
+                        <i class="bi bi-speedometer2"></i> Dashboard
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#" class="sidebar-link" data-page="stories">
+                        <i class="bi bi-file-text"></i> Stories
+                    </a>
+                </li>
+                <li class="sidebar-item editor-only" style="display: none;">
+                    <a href="#" class="sidebar-link" data-page="reviews">
+                        <i class="bi bi-clipboard-check"></i> Editor Reviews
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#" class="sidebar-link" data-page="verification">
+                        <i class="bi bi-shield-check"></i> Verification Queue
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#" class="sidebar-link" data-page="evidence">
+                        <i class="bi bi-folder"></i> Evidence Library
+                    </a>
+                </li>
+                <li class="sidebar-item editor-only" style="display: none;">
+                    <a href="#" class="sidebar-link" data-page="team">
+                        <i class="bi bi-people"></i> Team Management
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#" class="sidebar-link" data-page="analytics">
+                        <i class="bi bi-graph-up"></i> Analytics
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#" class="sidebar-link" data-page="settings">
+                        <i class="bi bi-gear"></i> Settings
+                    </a>
+                </li>
+            </ul>
+            
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar" id="userAvatar">MR</div>
+                    <div class="user-details">
+                        <div class="user-name" id="userName">Maya Rodriguez</div>
+                        <div class="user-role" id="userRole">Journalist</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content" id="mainContent">
+            <!-- Top Bar -->
+            <header class="top-bar">
+                <div class="d-flex align-items-center">
+                    <button class="menu-toggle" id="menuToggle">
+                        <i class="bi bi-list"></i>
+                    </button>
+                    <h1 class="page-title" id="pageTitle">Dashboard</h1>
+                </div>
+                
+                <div class="top-bar-actions">
+                    <div class="notification-bell" id="notificationBell">
+                        <i class="bi bi-bell"></i>
+                        <span class="notification-badge" id="notificationBadge">3</span>
+                        
+                        <div class="notification-dropdown" id="notificationDropdown">
+                            <div class="notification-header">
+                                <div class="notification-title">Notifications</div>
+                                <div class="mark-all-read">Mark all as read</div>
+                            </div>
+                            <div class="notification-list" id="notificationList">
+                                <!-- Notifications will be populated here -->
+                            </div>
+                            <div class="notification-footer">
+                                <a href="#" class="view-all">View all notifications</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="dropdown">
+                        <button class="btn btn-sm dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <span id="dropdownUserName">Maya Rodriguez</span>
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="userDropdown">
+                            <li><a class="dropdown-item" href="#">Profile</a></li>
+                            <li><a class="dropdown-item" href="#">Settings</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#" id="logoutBtn">Logout</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#" id="switchRoleMenu">Switch Role</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <div class="content-area">
+                <!-- Dashboard Page -->
+                <div class="page active" id="dashboardPage">
+                    <div class="welcome-message">
+                        <h2>Good afternoon, <span id="welcomeUserName">Maya</span>! 👋</h2>
+                        <p id="welcomeMessage">You have 2 pending verification requests and 1 peer review assignment</p>
+                    </div>
+
+                    <div class="quick-actions">
+                        <button class="btn-action btn-primary-action" id="newInvestigationBtn">
+                            <i class="bi bi-plus-circle"></i> Start New Investigation
+                        </button>
+                        <button class="btn-action btn-secondary-action" id="continueDraftBtn">
+                            <i class="bi bi-pencil-square"></i> Continue Draft
+                        </button>
+                        <button class="btn-action btn-secondary-action" id="viewQueueBtn">
+                            <i class="bi bi-list-check"></i> View Queue
+                        </button>
+                    </div>
+
+                    <div class="metrics-cards">
+                        <div class="metric-card">
+                            <div class="metric-value" id="activeStoriesCount">3</div>
+                            <div class="metric-label">Active Stories</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value" id="pendingVerificationsCount">2 <span style="color: var(--warning-color);">⚠️</span></div>
+                            <div class="metric-label">Pending Verification</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value" id="publishedThisMonthCount">5</div>
+                            <div class="metric-label">Published This Month</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value" id="avgTrustScore">87/100</div>
+                            <div class="metric-label">Avg Trust Score</div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-sections">
+                        <div>
+                            <div class="section-card">
+                                <div class="section-title">
+                                    Pending Tasks (3)
+                                    <a href="#" class="text-decoration-none">View All</a>
+                                </div>
+                                
+                                <div id="pendingTasksList">
+                                    <!-- Tasks will be populated here -->
+                                </div>
+                            </div>
+
+                            <div class="section-card">
+                                <div class="section-title">
+                                    Recent Activity
+                                    <a href="#" class="text-decoration-none">View All</a>
+                                </div>
+                                
+                                <div id="recentActivityList">
+                                    <!-- Activities will be populated here -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="section-card">
+                                <div class="section-title">
+                                    Team Updates
+                                    <a href="#" class="text-decoration-none">View All</a>
+                                </div>
+                                
+                                <div id="teamUpdatesList">
+                                    <!-- Team updates will be populated here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stories Page -->
+                <div class="page" id="storiesPage">
+                    <div class="stories-header">
+                        <h2>My Stories</h2>
+                        <div class="d-flex">
+                            <div class="search-bar">
+                                <i class="bi bi-search"></i>
+                                <input type="text" placeholder="Search stories...">
+                            </div>
+                            <select class="filter-dropdown">
+                                <option>All Status</option>
+                                <option>Draft</option>
+                                <option>Internal Review</option>
+                                <option>Editor Review</option>
+                                <option>Published</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="stories-list" id="storiesList">
+                        <!-- Stories will be populated here -->
+                    </div>
+                </div>
+
+                <!-- Editor Reviews Page -->
+                <div class="page" id="reviewsPage">
+                    <h2>Editor Reviews</h2>
+                    
+                    <div class="review-filters">
+                        <div class="filter-chip active">All Reviews</div>
+                        <div class="filter-chip">Internal Review</div>
+                        <div class="filter-chip">Editor Review</div>
+                        <div class="filter-chip">High Priority</div>
+                    </div>
+
+                    <div class="review-list" id="reviewList">
+                        <!-- Review items will be populated here -->
+                    </div>
+                </div>
+
+                <!-- Story Detail Page -->
+                <div class="page" id="storyDetailPage">
+                    <div class="story-detail-header">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div>
+                                <h1 class="story-detail-title" id="storyDetailTitle">Story Title</h1>
+                                <div class="story-detail-meta">
+                                    <span><i class="bi bi-person"></i> <span id="storyDetailAuthor">Author</span></span>
+                                    <span><i class="bi bi-calendar"></i> <span id="storyDetailDate">Date</span></span>
+                                    <span><i class="bi bi-file-earmark-text"></i> <span id="storyDetailWordCount">0</span> words</span>
+                                    <span><i class="bi bi-folder"></i> <span id="storyDetailEvidenceCount">0</span> evidence</span>
+                                </div>
+                            </div>
+                            <div>
+                                <span class="story-status" id="storyDetailStatus">Status</span>
+                                <button class="btn-story btn-edit ms-2" onclick="editCurrentStory()">
+                                    <i class="bi bi-pencil"></i> Edit Story
+                                </button>
+                                <button class="btn-story btn-status ms-2" id="changeStatusBtn" onclick="showStatusChangeModal()">
+                                    <i class="bi bi-arrow-repeat"></i> Change Status
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <p class="story-detail-description" id="storyDetailDescription">
+                            Story description will appear here...
+                        </p>
+                        
+                        <div class="story-trust-score">
+                            <div class="trust-score-value" id="storyDetailTrustScore">0/100</div>
+                            <div>
+                                <div class="trust-score-label">Overall Trust Score</div>
+                                <small>Based on evidence verification</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Status Change Modal -->
+                    <div class="status-change-modal" id="statusChangeModal" style="display: none;">
+                        <div class="status-change-title">Change Story Status</div>
+                        <div class="status-options">
+                            <label class="status-option">
+                                <input type="radio" name="statusOption" value="draft">
+                                <span>Draft</span>
+                            </label>
+                            <label class="status-option">
+                                <input type="radio" name="statusOption" value="internal-review">
+                                <span>Internal Review</span>
+                            </label>
+                            <label class="status-option">
+                                <input type="radio" name="statusOption" value="editor-review">
+                                <span>Editor Review</span>
+                            </label>
+                            <label class="status-option">
+                                <input type="radio" name="statusOption" value="published">
+                                <span>Published</span>
+                            </label>
+                        </div>
+                        <div class="status-reason">
+                            <label class="form-label">Reason for status change (optional)</label>
+                            <textarea class="form-control" id="statusReason" rows="3"></textarea>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button class="btn-modal btn-cancel" onclick="hideStatusChangeModal()">Cancel</button>
+                            <button class="btn-modal btn-save" onclick="changeStoryStatus()">Change Status</button>
+                        </div>
+                    </div>
+
+                    <div class="evidence-section">
+                        <div class="evidence-header">
+                            <h3 class="evidence-title">Evidence</h3>
+                            <button class="btn-upload" onclick="document.getElementById('evidenceFileInput').click()">
+                                <i class="bi bi-cloud-upload"></i> Upload Evidence
+                            </button>
+                            <input type="file" id="evidenceFileInput" style="display: none;" multiple accept="video/*,audio/*,.pdf,.doc,.docx,.txt,.jpg,.jpeg,.png">
+                        </div>
+                        
+                        <div class="upload-area" id="uploadArea">
+                            <div class="upload-icon">
+                                <i class="bi bi-cloud-upload"></i>
+                            </div>
+                            <div class="upload-text">
+                                Drag & drop multiple evidence files here or click to browse
+                            </div>
+                            <div class="upload-text small">
+                                Supported: Video, Audio, Documents, Images • Max size: 5GB per file
+                            </div>
+                        </div>
+
+                        <div class="evidence-list" id="storyEvidenceList">
+                            <!-- Evidence items will be populated here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Verification Queue Page -->
+                <div class="page" id="verificationPage">
+                    <h2>Verification Queue</h2>
+                    
+                    <div class="verification-filters">
+                        <div class="filter-chip active">All Items</div>
+                        <div class="filter-chip">High Priority</div>
+                        <div class="filter-chip">Medium Priority</div>
+                        <div class="filter-chip">Low Priority</div>
+                        <div class="filter-chip">My Assignments</div>
+                    </div>
+
+                    <div class="verification-list" id="verificationList">
+                        <!-- Verification items will be populated here -->
+                    </div>
+                </div>
+
+                <!-- Evidence Library Page -->
+                <div class="page" id="evidencePage">
+                    <h2>Evidence Library</h2>
+                    
+                    <div class="section-card">
+                        <div class="section-title">
+                            Upload New Evidence
+                        </div>
+                        
+                        <div class="upload-area">
+                            <div class="upload-icon">
+                                <i class="bi bi-cloud-upload"></i>
+                            </div>
+                            <div class="upload-text">
+                                Drag & drop files here or click to browse
+                            </div>
+                            <button class="btn-upload">Browse Files</button>
+                        </div>
+                    </div>
+
+                    <div class="section-card">
+                        <div class="section-title">
+                            Recent Evidence
+                        </div>
+                        
+                        <div class="evidence-list" id="evidenceList">
+                            <!-- Evidence items will be populated here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Team Management Page (Editor Only) -->
+                <div class="page" id="teamPage">
+                    <h2>Team Management</h2>
+                    
+                    <div class="section-card">
+                        <div class="section-title">
+                            Team Performance
+                        </div>
+                        
+                        <div class="metrics-cards">
+                            <div class="metric-card">
+                                <div class="metric-value">8</div>
+                                <div class="metric-label">Active Journalists</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-value">12</div>
+                                <div class="metric-label">Active Stories</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-value">5</div>
+                                <div class="metric-label">Pending Reviews</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-value">89/100</div>
+                                <div class="metric-label">Team Trust Score</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section-card">
+                        <div class="section-title">
+                            Team Workload
+                        </div>
+                        
+                        <div class="team-workload" id="teamWorkload">
+                            <!-- Team workload will be populated here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Analytics Page -->
+                <div class="page" id="analyticsPage">
+                    <h2>Analytics</h2>
+                    
+                    <div class="section-card">
+                        <div class="section-title">
+                            Verification Statistics
+                        </div>
+                        
+                        <div class="metrics-cards">
+                            <div class="metric-card">
+                                <div class="metric-value">47</div>
+                                <div class="metric-label">Evidence Verified This Week</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-value">4.2h</div>
+                                <div class="metric-label">Avg Verification Time</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-value">3</div>
+                                <div class="metric-label">High Risk Detected</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-value">2</div>
+                                <div class="metric-label">Deepfakes Prevented</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section-card">
+                        <div class="section-title">
+                            Trust Score Trends
+                        </div>
+                        
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle"></i> Trust score analytics will be displayed here in a production environment.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Settings Page -->
+                <div class="page" id="settingsPage">
+                    <h2>Settings</h2>
+                    
+                    <div class="section-card">
+                        <div class="section-title">
+                            Profile Settings
+                        </div>
+                        
+                        <form>
+                            <div class="form-group">
+                                <label class="form-label">Full Name</label>
+                                <input type="text" class="form-control" id="profileName" value="Maya Rodriguez">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-control" id="profileEmail" value="maya.rodriguez@newsorg.com">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Role</label>
+                                <input type="text" class="form-control" id="profileRole" value="Journalist" readonly>
+                            </div>
+                            
+                            <button type="button" class="btn-modal btn-save" id="saveProfileBtn">Save Changes</button>
+                        </form>
+                    </div>
+
+                    <div class="section-card">
+                        <div class="section-title">
+                            Notification Preferences
+                        </div>
+                        
+                        <form>
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" id="emailNotifications" checked>
+                                <label class="form-check-label" for="emailNotifications">
+                                    Email Notifications
+                                </label>
+                            </div>
+                            
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" id="pushNotifications" checked>
+                                <label class="form-check-label" for="pushNotifications">
+                                    Push Notifications
+                                </label>
+                            </div>
+                            
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" id="taskReminders" checked>
+                                <label class="form-check-label" for="taskReminders">
+                                    Task Reminders
+                                </label>
+                            </div>
+                            
+                            <button type="button" class="btn-modal btn-save" id="saveNotificationBtn">Save Preferences</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Admin Page -->
+    <div class="admin-container" id="adminPage" style="display: none;">
+        <header class="top-bar">
+            <div class="d-flex align-items-center">
+                <button class="menu-toggle" id="adminMenuToggle">
+                    <i class="bi bi-arrow-left"></i> Back to Login
+                </button>
+                <h1 class="page-title">Admin Settings</h1>
+            </div>
+            
+            <div class="top-bar-actions">
+                <div class="dropdown">
+                    <button class="btn btn-sm dropdown-toggle" type="button" id="adminUserDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        Admin
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="adminUserDropdown">
+                        <li><a class="dropdown-item" href="#">Profile</a></li>
+                        <li><a class="dropdown-item" href="#">Settings</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#" id="adminLogoutBtn">Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+        </header>
+
+        <div class="content-area">
+            <div class="admin-tabs">
+                <div class="admin-tab active" data-tab="users">User Management</div>
+                <div class="admin-tab" data-tab="system">System Settings</div>
+                <div class="admin-tab" data-tab="logs">Audit Logs</div>
+            </div>
+
+            <div class="tab-content active" id="usersTab">
+                <button class="add-user-btn" id="addUserBtn">
+                    <i class="bi bi-plus-circle"></i> Add New User
+                </button>
+                
+                <table class="users-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTableBody">
+                        <!-- Users will be populated here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="tab-content" id="systemTab">
+                <div class="section-card">
+                    <div class="section-title">
+                        System Configuration
+                    </div>
+                    
+                    <form>
+                        <div class="form-group">
+                            <label class="form-label">Organization Name</label>
+                            <input type="text" class="form-control" value="Financial Times">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Default Trust Score Threshold</label>
+                            <input type="number" class="form-control" value="75" min="0" max="100">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Verification Timeout (hours)</label>
+                            <input type="number" class="form-control" value="48" min="1" max="168">
+                        </div>
+                        
+                        <button type="button" class="btn-modal btn-save">Save Settings</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="tab-content" id="logsTab">
+                <div class="section-card">
+                    <div class="section-title">
+                        Recent System Activity
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i> System logs will be displayed here in a production environment.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Investigation Modal -->
+    <div class="modal" id="investigationModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">CREATE NEW INVESTIGATION</div>
+                <button class="close-modal" id="closeInvestigationModal">&times;</button>
+            </div>
+
+            <div class="step-indicator">
+                <div class="step active">1</div>
+                <div class="step-connector"></div>
+                <div class="step">2</div>
+                <div class="step-connector"></div>
+                <div class="step">3</div>
+                <div class="step-connector"></div>
+                <div class="step">4</div>
+            </div>
+
+            <!-- Step 1: Story Origin Assessment -->
+            <div class="form-step active" id="step1">
+                <h3>Story Discovery Assessment</h3>
+                <p>Understanding how you discovered this story helps us identify potential manipulation risks.</p>
+
+                <div class="form-group">
+                    <label class="form-label">Story Title *</label>
+                    <input type="text" class="form-control" id="storyTitle" placeholder="Enter story title">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">How did you discover this story? *</label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="origin" value="personal">
+                            Personal investigation / Original research
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="origin" value="source">
+                            Source tip (named, verified source)
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="origin" value="official">
+                            Official channels (SEC, press release, etc.)
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="origin" value="anonymous">
+                            Anonymous tip <span style="color: var(--warning-color);">⚠️</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="origin" value="social">
+                            Social media / Viral content <span style="color: var(--warning-color);">⚠️</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="origin" value="colleague">
+                            Forwarded from colleague
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="origin" value="other">
+                            Other: <input type="text" class="form-control" style="display: inline-block; width: auto; margin-left: 10px;">
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Is this story currently trending online?</label>
+                    <div class="radio-group" style="flex-direction: row;">
+                        <label class="radio-option" style="margin-right: 20px;">
+                            <input type="radio" name="trending" value="yes"> Yes
+                        </label>
+                        <label class="radio-option" style="margin-right: 20px;">
+                            <input type="radio" name="trending" value="no"> No
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="trending" value="unknown"> Don't know
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Are other news outlets covering this? *</label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="coverage" value="multiple"> Yes, multiple outlets <span style="color: var(--warning-color);">⚠️</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="coverage" value="one"> Yes, one other outlet
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="coverage" value="exclusive"> No, exclusive to me
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="coverage" value="unknown"> Don't know
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">If yes, are they using similar evidence?</label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="evidence" value="same"> Yes, same video/audio <span style="color: var(--danger-color);">🔴</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="evidence" value="different"> Yes, but different sources
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="evidence" value="no"> No, different evidence
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="evidence" value="na"> Not applicable
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Brief Description (1-2 sentences) *</label>
+                    <textarea class="form-control" rows="3" placeholder="Briefly describe your story"></textarea>
+                </div>
+            </div>
+
+            <!-- Step 2: Hypothesis Development -->
+            <div class="form-step" id="step2">
+                <h3>Hypothesis Development</h3>
+                <p>Your hypothesis guides your investigation. However, it can also create confirmation bias. We'll help you stay objective.</p>
+
+                <div class="form-group">
+                    <label class="form-label">What do you believe happened? (In 2-3 sentences) *</label>
+                    <textarea class="form-control" rows="4" placeholder="Example: I believe the CEO manipulated clinical trial data to inflate stock prices before a merger to benefit personally from the higher valuation."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">🧠 CRITICAL THINKING EXERCISE:</label>
+                    <p>What evidence would DISPROVE your hypothesis? * (This helps you stay objective)</p>
+                    <textarea class="form-control" rows="4" placeholder="Example: Evidence showing the CEO was not involved in data analysis, or that discrepancies were due to standard statistical methods."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Assign a "Devil's Advocate" (Optional)</label>
+                    <p>This colleague will challenge your assumptions throughout the investigation.</p>
+                    <select class="form-control">
+                        <option>Select Team Member</option>
+                        <option>Sarah Kim</option>
+                        <option>David Park</option>
+                        <option>Michael Chen</option>
+                        <option>Lisa Wang</option>
+                    </select>
+                </div>
+
+                <div class="alert alert-info">
+                    <strong>⚙️ SYSTEM TRACKING:</strong> We'll monitor if evidence aligns too perfectly with your hypothesis (a sign of confirmation bias or manufactured evidence).
+                </div>
+            </div>
+
+            <!-- Step 3: Emotional State Assessment -->
+            <div class="form-step" id="step3">
+                <h3>Emotional State & Pressure Assessment</h3>
+                <p>Your emotional state affects how you evaluate evidence. This quick self-assessment helps identify when you might be vulnerable to manipulation.</p>
+                <p>All responses are private and used only to support you.</p>
+
+                <div class="form-group">
+                    <label class="form-label">1. How excited are you about this story?</label>
+                    <div class="d-flex align-items-center">
+                        <span>Low excitement</span>
+                        <input type="range" class="form-range mx-3" min="1" max="10" value="5" id="excitementRange">
+                        <span>Very excited</span>
+                    </div>
+                    <div class="text-center mt-2">
+                        <span id="excitementValue">5</span> / 10
+                    </div>
+                    <div class="alert alert-warning mt-2">
+                        <i class="bi bi-info-circle"></i> High excitement (8-10) can reduce skepticism
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">2. Do you feel time pressure to publish this story?</label>
+                    <div class="d-flex align-items-center">
+                        <span>No pressure</span>
+                        <input type="range" class="form-range mx-3" min="1" max="10" value="5" id="pressureRange">
+                        <span>Extreme pressure</span>
+                    </div>
+                    <div class="text-center mt-2">
+                        <span id="pressureValue">5</span> / 10
+                    </div>
+                    <div class="alert alert-warning mt-2">
+                        <i class="bi bi-info-circle"></i> Time pressure increases risk of shortcuts
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">3. Are competitors covering this story?</label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="competitor" value="pressure"> Yes, and I feel pressure to beat them
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="competitor" value="no_pressure"> Yes, but no pressure
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="competitor" value="no"> No
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">4. Do you feel this story could be career-defining?</label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="career" value="major"> Yes, major opportunity
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="career" value="somewhat"> Somewhat important
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="career" value="standard"> Standard investigation
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">5. On a scale of 1-10, how emotionally invested are you in proving your hypothesis?</label>
+                    <div class="d-flex align-items-center">
+                        <span>Not invested</span>
+                        <input type="range" class="form-range mx-3" min="1" max="10" value="5" id="investmentRange">
+                        <span>Very invested</span>
+                    </div>
+                    <div class="text-center mt-2">
+                        <span id="investmentValue">5</span> / 10
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 4: Summary & Safeguards -->
+            <div class="form-step" id="step4">
+                <h3>Investigation Setup Complete</h3>
+
+                <div class="section-title">📋 INVESTIGATION DETAILS:</div>
+                <div class="mb-4">
+                    <p><strong>Story:</strong> <span id="summaryTitle">Pharmaceutical CEO Clinical Trial Fraud</span></p>
+                    <p><strong>Hypothesis:</strong> <span id="summaryHypothesis">CEO manipulated data for financial gain</span></p>
+                    <p><strong>Origin:</strong> <span id="summaryOrigin">Viral social media video</span></p>
+                </div>
+
+                <div class="section-title">🚨 RISK ASSESSMENT:</div>
+                <div class="mb-4">
+                    <p><strong>Origin Risk:</strong> <span id="originRiskLevel" style="color: var(--danger-color);">HIGH (75/100)</span></p>
+                    <ul>
+                        <li>Viral social media source</li>
+                        <li>Multiple outlets using same evidence</li>
+                        <li>Trending with suspicious amplification</li>
+                    </ul>
+                    
+                    <p><strong>Psychological Risk:</strong> <span id="psychRiskLevel" style="color: var(--danger-color);">HIGH (65/100)</span></p>
+                    <ul>
+                        <li>High excitement level (9/10)</li>
+                        <li>Time pressure present (7/10)</li>
+                        <li>Career-defining stakes</li>
+                        <li>Strong hypothesis investment (8/10)</li>
+                    </ul>
+                    
+                    <p><strong>COMBINED RISK:</strong> <span style="color: var(--danger-color); font-weight: bold;">CRITICAL ⚠️</span></p>
+                </div>
+
+                <div class="section-title">🛡️ SAFEGUARDS ACTIVATED:</div>
+                <div class="mb-4">
+                    <ul>
+                        <li>✓ Devil's Advocate assigned: Sarah Kim</li>
+                        <li>✓ Mandatory 48-hour cooling period</li>
+                        <li>✓ Peer review required before publication</li>
+                        <li>✓ Hypothesis-evidence alignment tracking (strict)</li>
+                        <li>✓ Evidence verification: Extra scrutiny level</li>
+                        <li>✓ All evidence assumed fake until proven real</li>
+                        <li>✓ Editor notification: High-risk investigation</li>
+                    </ul>
+                </div>
+
+                <div class="section-title">📝 NEXT STEPS:</div>
+                <div class="mb-4">
+                    <ol>
+                        <li>Begin evidence collection</li>
+                        <li>All evidence will trigger verification gateway</li>
+                        <li>Regular check-ins with Devil's Advocate</li>
+                        <li>Cooling period enforced before publishing</li>
+                    </ol>
+                </div>
+
+                <div class="form-group">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="acknowledge1">
+                        <label class="form-check-label" for="acknowledge1">
+                            I understand and acknowledge these risks
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="acknowledge2">
+                        <label class="form-check-label" for="acknowledge2">
+                            I commit to following verification protocols
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn-modal btn-prev" id="prevBtn" style="display: none;">Previous</button>
+                <button class="btn-modal btn-next" id="nextBtn">Next: Hypothesis →</button>
+                <button class="btn-modal btn-save" id="createBtn" style="display: none;">Create Investigation</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Story Detail Modal -->
+    <div class="modal" id="storyModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Story Details</div>
+                <button class="close-modal" id="closeStoryModal">&times;</button>
+            </div>
+            
+            <form id="storyForm">
+                <div class="form-group">
+                    <label class="form-label">Story Title</label>
+                    <input type="text" class="form-control" id="storyTitleInput">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Description</label>
+                    <textarea class="form-control form-textarea" id="storyDescriptionInput"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Status</label>
+                    <select class="form-control" id="storyStatusInput">
+                        <option value="draft">Draft</option>
+                        <option value="internal-review">Internal Review</option>
+                        <option value="editor-review">Editor Review</option>
+                        <option value="published">Published</option>
+                    </select>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn-modal btn-cancel" id="cancelStoryBtn">Cancel</button>
+                    <button type="button" class="btn-modal btn-save" id="saveStoryBtn">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- User Modal -->
+    <div class="modal" id="userModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title" id="userModalTitle">Add New User</div>
+                <button class="close-modal" id="closeUserModal">&times;</button>
+            </div>
+            
+            <form id="userForm">
+                <div class="form-group">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" class="form-control" id="userNameInput">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-control" id="userEmailInput">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Role</label>
+                    <select class="form-control" id="userRoleInput">
+                        <option value="journalist">Journalist</option>
+                        <option value="editor">Editor</option>
+                        <option value="verification">Verification Editor</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Status</label>
+                    <select class="form-control" id="userStatusInput">
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                    </select>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn-modal btn-cancel" id="cancelUserBtn">Cancel</button>
+                    <button type="button" class="btn-modal btn-save" id="saveUserBtn">Save User</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Sample data
+        const sampleData = {
+            stories: [
+                {
+                    id: 1,
+                    title: "Pharmaceutical CEO Clinical Trial Fraud",
+                    description: "Investigation into alleged manipulation of clinical trial data by pharmaceutical executives to boost stock prices before merger announcement.",
+                    status: "editor-review",
+                    author: "Maya Rodriguez",
+                    date: "2025-01-15",
+                    trustScore: 87,
+                    evidenceCount: 8,
+                    wordCount: 3247,
+                    evidence: [
+                        {
+                            id: 1,
+                            name: "CEO_interview_video.mp4",
+                            size: "1.2 GB",
+                            type: "MP4",
+                            uploadedDate: "2 hours ago",
+                            status: "verified",
+                            trustScore: 75,
+                            metadata: {
+                                duration: "5:42",
+                                resolution: "1920x1080",
+                                codec: "H.264",
+                                frameRate: "30fps",
+                                bitrate: "8.2 Mbps",
+                                created: "2025-01-14T14:30:22Z",
+                                modified: "2025-01-14T14:30:22Z"
+                            }
+                        },
+                        {
+                            id: 2,
+                            name: "internal_documents.pdf",
+                            size: "15 MB",
+                            type: "PDF",
+                            uploadedDate: "1 day ago",
+                            status: "verified",
+                            trustScore: 92,
+                            metadata: {
+                                pages: 24,
+                                author: "Unknown",
+                                created: "2025-01-13T09:15:33Z",
+                                modified: "2025-01-13T09:15:33Z",
+                                software: "Adobe Acrobat 11.0"
+                            }
+                        }
+                    ]
+                },
+                {
+                    id: 2,
+                    title: "Tech Startup Financial Misrepresentation",
+                    description: "Analysis of financial documents and internal communications suggesting deliberate misrepresentation of company assets to investors.",
+                    status: "draft",
+                    author: "Maya Rodriguez",
+                    date: "2025-01-12",
+                    trustScore: 0,
+                    evidenceCount: 5,
+                    wordCount: 1856,
+                    evidence: []
+                },
+                {
+                    id: 3,
+                    title: "Banking Sector Regulatory Compliance Analysis",
+                    description: "Examination of compliance practices across major banking institutions following new regulatory requirements.",
+                    status: "published",
+                    author: "Maya Rodriguez",
+                    date: "2025-01-05",
+                    trustScore: 92,
+                    evidenceCount: 12,
+                    wordCount: 2156,
+                    evidence: [
+                        {
+                            id: 3,
+                            name: "compliance_report.pdf",
+                            size: "8 MB",
+                            type: "PDF",
+                            uploadedDate: "3 days ago",
+                            status: "verified",
+                            trustScore: 95,
+                            metadata: {
+                                pages: 42,
+                                author: "Regulatory Affairs Department",
+                                created: "2025-01-10T11:22:45Z",
+                                modified: "2025-01-10T11:22:45Z",
+                                software: "Microsoft Word 2016"
+                            }
+                        }
+                    ]
+                }
+            ],
+            tasks: [
+                {
+                    id: 1,
+                    title: "Peer Review Assignment: Tech Startup Fraud Investigation",
+                    priority: "high",
+                    dueDate: "2025-01-16",
+                    assignedBy: "Editor-in-Chief",
+                    type: "peer_review"
+                },
+                {
+                    id: 2,
+                    title: "Verification Request: CEO_interview_video.mp4",
+                    priority: "medium",
+                    status: "AI Analysis Complete",
+                    riskScore: 8.2,
+                    type: "verification"
+                },
+                {
+                    id: 3,
+                    title: "Editor Feedback: Pharma Investigation",
+                    priority: "medium",
+                    received: "2 hours ago",
+                    type: "feedback"
+                }
+            ],
+            activities: [
+                {
+                    text: "Evidence uploaded \"ceo_statement.mp4\"",
+                    time: "2 hours ago"
+                },
+                {
+                    text: "Verification started \"Pharma Investigation\"",
+                    time: "5 hours ago"
+                },
+                {
+                    text: "Peer review completed \"Tech Startup Story\"",
+                    time: "Yesterday"
+                }
+            ],
+            teamUpdates: [
+                {
+                    id: 1,
+                    text: "🏆 James Chen won Verification Award for spotting deepfake",
+                    time: "Yesterday",
+                    thumbsUp: 5,
+                    liked: false
+                },
+                {
+                    id: 2,
+                    text: "📰 Sarah Kim published \"Banking Sector Analysis\"",
+                    subtext: "Trust Score: 92/100",
+                    time: "3 days ago",
+                    thumbsUp: 8,
+                    liked: false
+                },
+                {
+                    id: 3,
+                    text: "🎯 Team achieved 95% verification rate this quarter",
+                    time: "Last week",
+                    thumbsUp: 12,
+                    liked: false
+                }
+            ],
+            verifications: [
+                {
+                    id: 1,
+                    title: "CEO_investor_call_leaked.mp4",
+                    priority: "high",
+                    submittedBy: "Maya Rodriguez",
+                    submittedDate: "2025-01-15",
+                    fileSize: "1.2 GB",
+                    fileType: "MP4",
+                    progress: 20,
+                    riskScore: 8.2
+                },
+                {
+                    id: 2,
+                    title: "phone_call_recording.mp3",
+                    priority: "medium",
+                    submittedBy: "David Park",
+                    submittedDate: "2025-01-14",
+                    fileSize: "45 MB",
+                    fileType: "MP3",
+                    progress: 60,
+                    riskScore: 5.5
+                },
+                {
+                    id: 3,
+                    title: "financial_report_2024.pdf",
+                    priority: "low",
+                    submittedBy: "Sarah Kim",
+                    submittedDate: "2025-01-12",
+                    fileSize: "12 MB",
+                    fileType: "PDF",
+                    progress: 100,
+                    riskScore: 2.1
+                }
+            ],
+            evidence: [
+                {
+                    id: 1,
+                    name: "CEO_investor_call_leaked.mp4",
+                    size: "1.2 GB",
+                    type: "MP4",
+                    uploadedDate: "2 hours ago",
+                    status: "unverified"
+                },
+                {
+                    id: 2,
+                    name: "phone_call_recording.mp3",
+                    size: "45 MB",
+                    type: "MP3",
+                    uploadedDate: "1 day ago",
+                    status: "pending"
+                },
+                {
+                    id: 3,
+                    name: "financial_report_2024.pdf",
+                    size: "12 MB",
+                    type: "PDF",
+                    uploadedDate: "3 days ago",
+                    status: "verified",
+                    riskScore: 2.1
+                }
+            ],
+            users: [
+                {
+                    id: 1,
+                    name: "Maya Rodriguez",
+                    email: "maya.rodriguez@newsorg.com",
+                    role: "Journalist",
+                    status: "active"
+                },
+                {
+                    id: 2,
+                    name: "James Chen",
+                    email: "james.chen@newsorg.com",
+                    role: "Editor",
+                    status: "active"
+                },
+                {
+                    id: 3,
+                    name: "Sarah Kim",
+                    email: "sarah.kim@newsorg.com",
+                    role: "Journalist",
+                    status: "active"
+                },
+                {
+                    id: 4,
+                    name: "David Park",
+                    email: "david.park@newsorg.com",
+                    role: "Verification Editor",
+                    status: "active"
+                },
+                {
+                    id: 5,
+                    name: "Michael Chen",
+                    email: "michael.chen@newsorg.com",
+                    role: "Journalist",
+                    status: "inactive"
+                }
+            ],
+            notifications: [
+                {
+                    id: 1,
+                    text: "Peer review assigned: Tech Startup Fraud Investigation",
+                    time: "1 hour ago",
+                    unread: true
+                },
+                {
+                    id: 2,
+                    text: "Verification complete: financial_report_2024.pdf",
+                    time: "3 hours ago",
+                    unread: true
+                },
+                {
+                    id: 3,
+                    text: "New comment on Pharma Investigation",
+                    time: "5 hours ago",
+                    unread: true
+                },
+                {
+                    id: 4,
+                    text: "Story published: Banking Sector Analysis",
+                    time: "Yesterday",
+                    unread: false
+                }
+            ],
+            teamWorkload: [
+                {
+                    name: "Maya Rodriguez",
+                    activeStories: 3,
+                    pendingReviews: 1
+                },
+                {
+                    name: "David Park",
+                    activeStories: 2,
+                    pendingReviews: 0
+                },
+                {
+                    name: "Sarah Kim",
+                    activeStories: 1,
+                    pendingReviews: 2
+                },
+                {
+                    name: "Michael Chen",
+                    activeStories: 4,
+                    pendingReviews: 1
+                },
+                {
+                    name: "Lisa Wang",
+                    activeStories: 2,
+                    pendingReviews: 0
+                }
+            ]
+        };
+
+        // Global variables
+        let currentUser = null;
+        let currentUserRole = null;
+        let currentStoryId = null;
+        let currentUserId = null;
+        let currentInvestigationStep = 1;
+        let currentStoryDetail = null;
+        const totalInvestigationSteps = 4;
+
+        // DOM elements
+        const loginPage = document.getElementById('loginPage');
+        const appContainer = document.getElementById('appContainer');
+        const adminPage = document.getElementById('adminPage');
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.getElementById('mainContent');
+        const menuToggle = document.getElementById('menuToggle');
+        const notificationBell = document.getElementById('notificationBell');
+        const notificationDropdown = document.getElementById('notificationDropdown');
+        const notificationBadge = document.getElementById('notificationBadge');
+        const notificationList = document.getElementById('notificationList');
+        const pageTitle = document.getElementById('pageTitle');
+        const pages = document.querySelectorAll('.page');
+        const sidebarLinks = document.querySelectorAll('.sidebar-link');
+        const loginOptions = document.querySelectorAll('.login-option');
+        const adminLink = document.getElementById('adminLink');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const adminLogoutBtn = document.getElementById('adminLogoutBtn');
+        const adminMenuToggle = document.getElementById('adminMenuToggle');
+        const newInvestigationBtn = document.getElementById('newInvestigationBtn');
+        const continueDraftBtn = document.getElementById('continueDraftBtn');
+        const viewQueueBtn = document.getElementById('viewQueueBtn');
+        const investigationModal = document.getElementById('investigationModal');
+        const storyModal = document.getElementById('storyModal');
+        const userModal = document.getElementById('userModal');
+        const storyForm = document.getElementById('storyForm');
+        const userForm = document.getElementById('userForm');
+        const adminTabs = document.querySelectorAll('.admin-tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const uploadArea = document.getElementById('uploadArea');
+        const evidenceFileInput = document.getElementById('evidenceFileInput');
+        const switchRoleLink = document.getElementById('switchRoleLink');
+        const switchRoleMenu = document.getElementById('switchRoleMenu');
+
+        // Initialize the app
+        function init() {
+            setupEventListeners();
+            populateData();
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Login options
+            loginOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    loginOptions.forEach(opt => opt.classList.remove('active'));
+                    this.classList.add('active');
+                    currentUserRole = this.getAttribute('data-role');
+                });
+            });
+
+            // Login form
+            document.getElementById('loginForm').addEventListener('submit', handleLogin);
+
+            // Admin link
+            adminLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                showAdminPage();
+            });
+
+            // Switch role links
+            switchRoleLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                showRoleSwitchModal();
+            });
+
+            switchRoleMenu.addEventListener('click', function(e) {
+                e.preventDefault();
+                showRoleSwitchModal();
+            });
+
+            // Logout buttons
+            logoutBtn.addEventListener('click', handleLogout);
+            adminLogoutBtn.addEventListener('click', handleLogout);
+
+            // Admin menu toggle
+            adminMenuToggle.addEventListener('click', function() {
+                adminPage.style.display = 'none';
+                loginPage.style.display = 'flex';
+            });
+
+            // Menu toggle
+            menuToggle.addEventListener('click', toggleSidebar);
+
+            // Sidebar navigation
+            sidebarLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const pageName = this.getAttribute('data-page');
+                    showPage(pageName);
+                });
+            });
+
+            // Notification bell
+            notificationBell.addEventListener('click', function(e) {
+                e.stopPropagation();
+                notificationDropdown.classList.toggle('show');
+            });
+
+            // Close notification dropdown when clicking outside
+            document.addEventListener('click', function() {
+                notificationDropdown.classList.remove('show');
+            });
+
+            // Quick action buttons
+            newInvestigationBtn.addEventListener('click', function() {
+                openInvestigationModal();
+            });
+
+            continueDraftBtn.addEventListener('click', function() {
+                // Find the first draft story
+                const draftStory = sampleData.stories.find(story => story.status === 'draft');
+                if (draftStory) {
+                    showStoryDetail(draftStory.id);
+                } else {
+                    showNotification('No draft stories found', 'warning');
+                }
+            });
+
+            viewQueueBtn.addEventListener('click', function() {
+                showPage('verification');
+            });
+
+            // Investigation modal
+            document.getElementById('closeInvestigationModal').addEventListener('click', closeInvestigationModal);
+            document.getElementById('prevBtn').addEventListener('click', previousInvestigationStep);
+            document.getElementById('nextBtn').addEventListener('click', nextInvestigationStep);
+            document.getElementById('createBtn').addEventListener('click', createInvestigation);
+
+            // Story modal
+            document.getElementById('closeStoryModal').addEventListener('click', closeStoryModal);
+            document.getElementById('cancelStoryBtn').addEventListener('click', closeStoryModal);
+            document.getElementById('saveStoryBtn').addEventListener('click', saveStory);
+
+            // User modal
+            document.getElementById('closeUserModal').addEventListener('click', closeUserModal);
+            document.getElementById('cancelUserBtn').addEventListener('click', closeUserModal);
+            document.getElementById('saveUserBtn').addEventListener('click', saveUser);
+
+            // Add user button
+            document.getElementById('addUserBtn').addEventListener('click', function() {
+                currentUserId = null;
+                document.getElementById('userModalTitle').textContent = 'Add New User';
+                document.getElementById('userNameInput').value = '';
+                document.getElementById('userEmailInput').value = '';
+                document.getElementById('userRoleInput').value = 'journalist';
+                document.getElementById('userStatusInput').value = 'active';
+                userModal.classList.add('show');
+            });
+
+            // Admin tabs
+            adminTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabName = this.getAttribute('data-tab');
+                    
+                    adminTabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    tabContents.forEach(content => {
+                        content.classList.remove('active');
+                        if (content.id === `${tabName}Tab`) {
+                            content.classList.add('active');
+                        }
+                    });
+                });
+            });
+
+            // Profile settings
+            document.getElementById('saveProfileBtn').addEventListener('click', function() {
+                const name = document.getElementById('profileName').value;
+                const email = document.getElementById('profileEmail').value;
+                
+                // Update user info
+                currentUser.name = name;
+                currentUser.email = email;
+                
+                // Update UI
+                document.getElementById('userName').textContent = name;
+                document.getElementById('dropdownUserName').textContent = name;
+                document.getElementById('welcomeUserName').textContent = name.split(' ')[0];
+                document.getElementById('userAvatar').textContent = name.split(' ').map(n => n[0]).join('');
+                
+                showNotification('Profile updated successfully', 'success');
+            });
+
+            // Notification settings
+            document.getElementById('saveNotificationBtn').addEventListener('click', function() {
+                showNotification('Notification preferences saved', 'success');
+            });
+
+            // Range inputs for investigation modal
+            document.getElementById('excitementRange').addEventListener('input', function() {
+                document.getElementById('excitementValue').textContent = this.value;
+            });
+            
+            document.getElementById('pressureRange').addEventListener('input', function() {
+                document.getElementById('pressureValue').textContent = this.value;
+            });
+            
+            document.getElementById('investmentRange').addEventListener('input', function() {
+                document.getElementById('investmentValue').textContent = this.value;
+            });
+
+            // Evidence file upload
+            evidenceFileInput.addEventListener('change', handleEvidenceUpload);
+
+            // Drag and drop for evidence
+            uploadArea.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                this.classList.add('dragover');
+            });
+
+            uploadArea.addEventListener('dragleave', function(e) {
+                e.preventDefault();
+                this.classList.remove('dragover');
+            });
+
+            uploadArea.addEventListener('drop', function(e) {
+                e.preventDefault();
+                this.classList.remove('dragover');
+                handleEvidenceFiles(e.dataTransfer.files);
+            });
+
+            uploadArea.addEventListener('click', function() {
+                evidenceFileInput.click();
+            });
+        }
+
+        // Handle login
+        function handleLogin(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            // Simple validation (in a real app, this would be server-side)
+            if (email && password) {
+                // Show loading state
+                const loginBtn = document.querySelector('.btn-login');
+                loginBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Signing in...';
+                loginBtn.disabled = true;
+                
+                // Simulate authentication delay
+                setTimeout(() => {
+                    // Set current user based on role
+                    if (currentUserRole === 'editor') {
+                        currentUser = {
+                            name: 'James Chen',
+                            email: email,
+                            role: 'Editor'
+                        };
+                    } else {
+                        currentUser = {
+                            name: 'Maya Rodriguez',
+                            email: email,
+                            role: 'Journalist'
+                        };
+                    }
+                    
+                    // Show app
+                    showApp();
+                }, 1500);
+            }
+        }
+
+        // Show role switch modal
+        function showRoleSwitchModal() {
+            // Create a simple modal for role switching
+            const modal = document.createElement('div');
+            modal.className = 'modal show';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <div class="modal-title">Switch Role</div>
+                        <button class="close-modal" onclick="this.closest('.modal').remove()">&times;</button>
+                    </div>
+                    <div class="mb-3">
+                        <p>Select the role you want to switch to:</p>
+                        <div class="d-flex gap-3 justify-content-center">
+                            <button class="btn-modal btn-save" onclick="switchToRole('journalist')">Journalist</button>
+                            <button class="btn-modal btn-save" onclick="switchToRole('editor')">Editor</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        // Switch to role
+        function switchToRole(role) {
+            // Close modal
+            document.querySelector('.modal').remove();
+            
+            // Update current role
+            currentUserRole = role;
+            
+            // Update user based on role
+            if (role === 'editor') {
+                currentUser = {
+                    name: 'James Chen',
+                    email: 'james.chen@newsorg.com',
+                    role: 'Editor'
+                };
+            } else {
+                currentUser = {
+                    name: 'Maya Rodriguez',
+                    email: 'maya.rodriguez@newsorg.com',
+                    role: 'Journalist'
+                };
+            }
+            
+            // Show app with new role
+            showApp();
+        }
+
+        // Handle logout
+        function handleLogout() {
+            // Hide app
+            appContainer.style.display = 'none';
+            adminPage.style.display = 'none';
+            
+            // Show login page
+            loginPage.style.display = 'flex';
+            
+            // Reset form
+            document.getElementById('email').value = '';
+            document.getElementById('password').value = '';
+            
+            // Reset login button
+            const loginBtn = document.querySelector('.btn-login');
+            loginBtn.innerHTML = 'Sign In';
+            loginBtn.disabled = false;
+        }
+
+        // Show app
+        function showApp() {
+            // Hide login page
+            loginPage.style.display = 'none';
+            
+            // Show app container
+            appContainer.style.display = 'block';
+            
+            // Update user info
+            document.getElementById('userName').textContent = currentUser.name;
+            document.getElementById('dropdownUserName').textContent = currentUser.name;
+            document.getElementById('userRole').textContent = currentUser.role;
+            document.getElementById('welcomeUserName').textContent = currentUser.name.split(' ')[0];
+            document.getElementById('userAvatar').textContent = currentUser.name.split(' ').map(n => n[0]).join('');
+            
+            // Show/hide editor-only elements
+            const editorElements = document.querySelectorAll('.editor-only');
+            if (currentUser.role === 'Editor') {
+                editorElements.forEach(el => el.style.display = 'block');
+            } else {
+                editorElements.forEach(el => el.style.display = 'none');
+            }
+            
+            // Update welcome message based on role
+            if (currentUser.role === 'Editor') {
+                document.getElementById('welcomeMessage').textContent = 'You have 3 stories pending approval and 2 team members with verification requests';
+            } else {
+                document.getElementById('welcomeMessage').textContent = 'You have 2 pending verification requests and 1 peer review assignment';
+            }
+            
+            // Show welcome notification
+            showNotification(`Login successful! Welcome back, ${currentUser.name}.`, 'success');
+            
+            // Show appropriate page based on role
+            if (currentUser.role === 'Editor') {
+                showPage('reviews');
+            } else {
+                showPage('dashboard');
+            }
+        }
+
+        // Show admin page
+        function showAdminPage() {
+            // Hide login page
+            loginPage.style.display = 'none';
+            
+            // Show admin page
+            adminPage.style.display = 'block';
+            
+            // Populate users table
+            populateUsersTable();
+        }
+
+        // Toggle sidebar
+        function toggleSidebar() {
+            sidebar.classList.toggle('collapsed');
+            mainContent.classList.toggle('expanded');
+        }
+
+        // Show page
+        function showPage(pageName) {
+            // Update page title
+            const titles = {
+                dashboard: 'Dashboard',
+                stories: 'Stories',
+                reviews: 'Editor Reviews',
+                verification: 'Verification Queue',
+                evidence: 'Evidence Library',
+                team: 'Team Management',
+                analytics: 'Analytics',
+                settings: 'Settings'
+            };
+            
+            pageTitle.textContent = titles[pageName] || 'Dashboard';
+            
+            // Update active sidebar link
+            sidebarLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('data-page') === pageName) {
+                    link.classList.add('active');
+                }
+            });
+            
+            // Show/hide pages
+            pages.forEach(page => {
+                page.classList.remove('active');
+                if (page.id === `${pageName}Page`) {
+                    page.classList.add('active');
+                }
+            });
+            
+            // Populate page-specific data
+            if (pageName === 'stories') {
+                populateStoriesList();
+            } else if (pageName === 'reviews') {
+                populateReviewsList();
+            } else if (pageName === 'verification') {
+                populateVerificationList();
+            } else if (pageName === 'evidence') {
+                populateEvidenceList();
+            } else if (pageName === 'team') {
+                populateTeamWorkload();
+            }
+        }
+
+        // Show story detail
+        function showStoryDetail(storyId) {
+            currentStoryDetail = sampleData.stories.find(s => s.id === storyId);
+            if (currentStoryDetail) {
+                // Update story detail page
+                document.getElementById('storyDetailTitle').textContent = currentStoryDetail.title;
+                document.getElementById('storyDetailAuthor').textContent = currentStoryDetail.author;
+                document.getElementById('storyDetailDate').textContent = currentStoryDetail.date;
+                document.getElementById('storyDetailWordCount').textContent = currentStoryDetail.wordCount;
+                document.getElementById('storyDetailEvidenceCount').textContent = currentStoryDetail.evidenceCount;
+                document.getElementById('storyDetailDescription').textContent = currentStoryDetail.description;
+                document.getElementById('storyDetailTrustScore').textContent = currentStoryDetail.trustScore + '/100';
+                
+                // Update status
+                const statusElement = document.getElementById('storyDetailStatus');
+                statusElement.textContent = formatStatusText(currentStoryDetail.status);
+                statusElement.className = 'story-status status-' + currentStoryDetail.status;
+                
+                // Populate evidence list
+                populateStoryEvidence();
+                
+                // Show story detail page
+                showPage('storyDetail');
+            }
+        }
+
+        // Format status text
+        function formatStatusText(status) {
+            return status.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+        }
+
+        // Populate story evidence
+        function populateStoryEvidence() {
+            const evidenceList = document.getElementById('storyEvidenceList');
+            evidenceList.innerHTML = '';
+            
+            if (currentStoryDetail && currentStoryDetail.evidence.length > 0) {
+                currentStoryDetail.evidence.forEach(evidence => {
+                    const evidenceElement = document.createElement('div');
+                    evidenceElement.className = 'evidence-item';
+                    
+                    let statusClass = '';
+                    let statusText = '';
+                    let trustScoreClass = '';
+                    
+                    if (evidence.status === 'verified') {
+                        statusClass = 'status-verified';
+                        statusText = 'VERIFIED';
+                        if (evidence.trustScore >= 80) {
+                            trustScoreClass = 'trust-score-high';
+                        } else if (evidence.trustScore >= 50) {
+                            trustScoreClass = 'trust-score-medium';
+                        } else {
+                            trustScoreClass = 'trust-score-low';
+                        }
+                    }
+                    
+                    // Build metadata string
+                    let metadataString = '';
+                    if (evidence.metadata) {
+                        const metadataItems = [];
+                        for (const [key, value] of Object.entries(evidence.metadata)) {
+                            const formattedKey = key.replace(/([A-Z])/g, ' $1').trim();
+                            const capitalizedKey = formattedKey.charAt(0).toUpperCase() + formattedKey.slice(1);
+                            metadataItems.push(`${capitalizedKey}: ${value}`);
+                        }
+                        metadataString = metadataItems.join(' • ');
+                    }
+                    
+                    evidenceElement.innerHTML = `
+                        <div class="evidence-info">
+                            <div class="evidence-icon">
+                                <i class="bi bi-file-earmark-${evidence.type.toLowerCase()}"></i>
+                            </div>
+                            <div class="evidence-details">
+                                <h4>${evidence.name}</h4>
+                                <div class="evidence-meta">${evidence.size} • ${evidence.type} • Uploaded ${evidence.uploadedDate}</div>
+                                ${metadataString ? `<div class="evidence-metadata">${metadataString}</div>` : ''}
+                                ${evidence.status === 'verified' ? 
+                                    `<div class="evidence-trust-score ${trustScoreClass}">
+                                        <i class="bi bi-shield-check"></i> Trust Score: ${evidence.trustScore}/100
+                                    </div>` : ''
+                                }
+                            </div>
+                        </div>
+                        <div class="evidence-status ${statusClass}">${statusText}</div>
+                        <div class="evidence-actions">
+                            <button class="btn-evidence btn-view" onclick="viewEvidenceDetail(${evidence.id})">View Details</button>
+                            <button class="btn-evidence btn-delete" onclick="deleteEvidence(${evidence.id})">Delete</button>
+                        </div>
+                    `;
+                    
+                    evidenceList.appendChild(evidenceElement);
+                });
+            } else {
+                evidenceList.innerHTML = '<p class="text-muted">No evidence uploaded yet. Upload evidence to get started with verification.</p>';
+            }
+        }
+
+        // Handle evidence upload
+        function handleEvidenceUpload(e) {
+            const files = e.target.files;
+            handleEvidenceFiles(files);
+        }
+
+        // Handle evidence files
+        function handleEvidenceFiles(files) {
+            if (!currentStoryDetail) {
+                showNotification('Please select a story first', 'warning');
+                return;
+            }
+            
+            Array.from(files).forEach(file => {
+                // Generate metadata for the file
+                const metadata = generateFileMetadata(file);
+                
+                // Simulate file upload and verification
+                const newEvidence = {
+                    id: Date.now() + Math.random(),
+                    name: file.name,
+                    size: formatFileSize(file.size),
+                    type: file.type.split('/')[1].toUpperCase() || 'FILE',
+                    uploadedDate: 'Just now',
+                    status: 'pending',
+                    trustScore: 0,
+                    metadata: metadata
+                };
+                
+                // Add to current story evidence
+                currentStoryDetail.evidence.push(newEvidence);
+                currentStoryDetail.evidenceCount++;
+                
+                // Simulate verification process
+                setTimeout(() => {
+                    newEvidence.status = 'verified';
+                    newEvidence.trustScore = Math.floor(Math.random() * 40) + 60; // Random trust score between 60-100
+                    
+                    // Update story trust score (average of all evidence)
+                    const totalScore = currentStoryDetail.evidence.reduce((sum, e) => sum + (e.trustScore || 0), 0);
+                    const verifiedCount = currentStoryDetail.evidence.filter(e => e.status === 'verified').length;
+                    currentStoryDetail.trustScore = verifiedCount > 0 ? Math.round(totalScore / verifiedCount) : 0;
+                    
+                    // Update UI
+                    populateStoryEvidence();
+                    updateStoryDetailUI();
+                    
+                    showNotification(`Evidence "${file.name}" verified with trust score ${newEvidence.trustScore}/100`, 'success');
+                }, 2000);
+            });
+            
+            // Update UI immediately
+            populateStoryEvidence();
+            updateStoryDetailUI();
+            showNotification(`${files.length} file(s) uploaded. Verification in progress...`, 'info');
+        }
+
+        // Generate file metadata
+        function generateFileMetadata(file) {
+            const metadata = {};
+            
+            // Common metadata for all files
+            metadata.size = formatFileSize(file.size);
+            metadata.type = file.type;
+            metadata.lastModified = new Date(file.lastModified).toISOString();
+            
+            // Type-specific metadata
+            if (file.type.startsWith('video/')) {
+                metadata.duration = "0:00"; // Would be extracted in a real implementation
+                metadata.resolution = "Unknown";
+                metadata.codec = "Unknown";
+            } else if (file.type.startsWith('audio/')) {
+                metadata.duration = "0:00";
+                metadata.bitrate = "Unknown";
+                metadata.codec = "Unknown";
+            } else if (file.type === 'application/pdf') {
+                metadata.pages = "Unknown";
+                metadata.author = "Unknown";
+            } else if (file.type.startsWith('image/')) {
+                metadata.dimensions = "Unknown";
+                metadata.colorSpace = "Unknown";
+            } else if (file.type.includes('word') || file.type.includes('document')) {
+                metadata.pages = "Unknown";
+                metadata.wordCount = "Unknown";
+            }
+            
+            return metadata;
+        }
+
+        // Format file size
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // Update story detail UI
+        function updateStoryDetailUI() {
+            if (currentStoryDetail) {
+                document.getElementById('storyDetailEvidenceCount').textContent = currentStoryDetail.evidenceCount;
+                document.getElementById('storyDetailTrustScore').textContent = currentStoryDetail.trustScore + '/100';
+            }
+        }
+
+        // Delete evidence
+        function deleteEvidence(evidenceId) {
+            if (!currentStoryDetail) return;
+            
+            if (confirm('Are you sure you want to delete this evidence?')) {
+                const index = currentStoryDetail.evidence.findIndex(e => e.id === evidenceId);
+                if (index !== -1) {
+                    const evidenceName = currentStoryDetail.evidence[index].name;
+                    currentStoryDetail.evidence.splice(index, 1);
+                    currentStoryDetail.evidenceCount--;
+                    
+                    // Recalculate trust score
+                    const totalScore = currentStoryDetail.evidence.reduce((sum, e) => sum + (e.trustScore || 0), 0);
+                    const verifiedCount = currentStoryDetail.evidence.filter(e => e.status === 'verified').length;
+                    currentStoryDetail.trustScore = verifiedCount > 0 ? Math.round(totalScore / verifiedCount) : 0;
+                    
+                    populateStoryEvidence();
+                    updateStoryDetailUI();
+                    showNotification(`Evidence "${evidenceName}" deleted`, 'success');
+                }
+            }
+        }
+
+        // View evidence detail
+        function viewEvidenceDetail(evidenceId) {
+            if (!currentStoryDetail) return;
+            
+            const evidence = currentStoryDetail.evidence.find(e => e.id === evidenceId);
+            if (evidence) {
+                showNotification(`Opening details for "${evidence.name}"...`, 'info');
+            }
+        }
+
+        // Edit current story
+        function editCurrentStory() {
+            if (!currentStoryDetail) return;
+            
+            document.getElementById('storyTitleInput').value = currentStoryDetail.title;
+            document.getElementById('storyDescriptionInput').value = currentStoryDetail.description;
+            document.getElementById('storyStatusInput').value = currentStoryDetail.status;
+            
+            storyModal.classList.add('show');
+        }
+
+        // Show status change modal
+        function showStatusChangeModal() {
+            if (!currentStoryDetail) return;
+            
+            // Set current status as selected
+            const statusRadios = document.querySelectorAll('input[name="statusOption"]');
+            statusRadios.forEach(radio => {
+                radio.checked = radio.value === currentStoryDetail.status;
+            });
+            
+            // Show modal
+            document.getElementById('statusChangeModal').style.display = 'block';
+        }
+
+        // Hide status change modal
+        function hideStatusChangeModal() {
+            document.getElementById('statusChangeModal').style.display = 'none';
+            document.getElementById('statusReason').value = '';
+        }
+
+        // Change story status
+        function changeStoryStatus() {
+            if (!currentStoryDetail) return;
+            
+            const selectedStatus = document.querySelector('input[name="statusOption"]:checked');
+            const reason = document.getElementById('statusReason').value;
+            
+            if (!selectedStatus) {
+                showNotification('Please select a status', 'warning');
+                return;
+            }
+            
+            const newStatus = selectedStatus.value;
+            const oldStatus = currentStoryDetail.status;
+            
+            // Update story status
+            currentStoryDetail.status = newStatus;
+            
+            // Update in stories array
+            const storyIndex = sampleData.stories.findIndex(s => s.id === currentStoryDetail.id);
+            if (storyIndex !== -1) {
+                sampleData.stories[storyIndex] = currentStoryDetail;
+            }
+            
+            // Handle status change logic
+            if (newStatus === 'internal-review' && currentStoryDetail.trustScore < 50) {
+                showNotification('Story sent for internal review due to low trust score', 'warning');
+            } else if (newStatus === 'editor-review' && currentStoryDetail.trustScore >= 50) {
+                showNotification('Story sent for editor review', 'success');
+                
+                // Add to editor's review queue
+                if (!sampleData.editorReviews) {
+                    sampleData.editorReviews = [];
+                }
+                
+                sampleData.editorReviews.push({
+                    id: Date.now(),
+                    storyId: currentStoryDetail.id,
+                    title: currentStoryDetail.title,
+                    author: currentStoryDetail.author,
+                    trustScore: currentStoryDetail.trustScore,
+                    status: 'pending',
+                    submittedDate: new Date().toISOString().split('T')[0],
+                    reason: reason
+                });
+            } else if (newStatus === 'published') {
+                showNotification('Story published successfully', 'success');
+            }
+            
+            // Update UI
+            document.getElementById('storyDetailStatus').textContent = formatStatusText(newStatus);
+            document.getElementById('storyDetailStatus').className = 'story-status status-' + newStatus;
+            
+            hideStatusChangeModal();
+            
+            // Add to activities
+            sampleData.activities.unshift({
+                text: `Status changed from "${formatStatusText(oldStatus)}" to "${formatStatusText(newStatus)}" for "${currentStoryDetail.title}"`,
+                time: 'Just now'
+            });
+            
+            showNotification(`Story status changed to "${formatStatusText(newStatus)}"`, 'success');
+        }
+
+        // Populate reviews list
+        function populateReviewsList() {
+            const reviewList = document.getElementById('reviewList');
+            reviewList.innerHTML = '';
+            
+            if (!sampleData.editorReviews || sampleData.editorReviews.length === 0) {
+                reviewList.innerHTML = '<p class="text-muted">No stories pending review</p>';
+                return;
+            }
+            
+            sampleData.editorReviews.forEach(review => {
+                const reviewElement = document.createElement('div');
+                reviewElement.className = 'review-card';
+                
+                let priorityClass = '';
+                let priorityText = '';
+                
+                if (review.trustScore < 50) {
+                    priorityClass = 'priority-high';
+                    priorityText = 'High Priority';
+                } else if (review.trustScore < 75) {
+                    priorityClass = 'priority-medium';
+                    priorityText = 'Medium Priority';
+                } else {
+                    priorityClass = 'priority-low';
+                    priorityText = 'Low Priority';
+                }
+                
+                reviewElement.innerHTML = `
+                    <div class="review-header">
+                        <div class="review-title">${review.title}</div>
+                        <div class="review-priority ${priorityClass}">${priorityText}</div>
+                    </div>
+                    <div class="review-details">
+                        <div class="detail-item">
+                            <div class="detail-label">Author</div>
+                            <div class="detail-value">${review.author}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Submitted Date</div>
+                            <div class="detail-value">${review.submittedDate}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Trust Score</div>
+                            <div class="detail-value">${review.trustScore}/100</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Status</div>
+                            <div class="detail-value">${formatStatusText(review.status)}</div>
+                        </div>
+                    </div>
+                    ${review.reason ? `<div class="mb-3"><strong>Reason:</strong> ${review.reason}</div>` : ''}
+                    <div class="review-actions">
+                        <button class="btn-story btn-approve" onclick="approveReview(${review.id})">Approve</button>
+                        <button class="btn-story btn-reject" onclick="rejectReview(${review.id})">Reject</button>
+                        <button class="btn-story btn-request-changes" onclick="requestChanges(${review.id})">Request Changes</button>
+                    </div>
+                `;
+                
+                reviewList.appendChild(reviewElement);
+            });
+        }
+
+        // Approve review
+        function approveReview(reviewId) {
+            const reviewIndex = sampleData.editorReviews.findIndex(r => r.id === reviewId);
+            if (reviewIndex !== -1) {
+                const review = sampleData.editorReviews[reviewIndex];
+                
+                // Update story status to published
+                const storyIndex = sampleData.stories.findIndex(s => s.id === review.storyId);
+                if (storyIndex !== -1) {
+                    sampleData.stories[storyIndex].status = 'published';
+                }
+                
+                // Remove from reviews
+                sampleData.editorReviews.splice(reviewIndex, 1);
+                
+                // Refresh UI
+                populateReviewsList();
+                
+                showNotification(`Story "${review.title}" approved and published`, 'success');
+            }
+        }
+
+        // Reject review
+        function rejectReview(reviewId) {
+            const reviewIndex = sampleData.editorReviews.findIndex(r => r.id === reviewId);
+            if (reviewIndex !== -1) {
+                const review = sampleData.editorReviews[reviewIndex];
+                
+                // Update story status back to draft
+                const storyIndex = sampleData.stories.findIndex(s => s.id === review.storyId);
+                if (storyIndex !== -1) {
+                    sampleData.stories[storyIndex].status = 'draft';
+                }
+                
+                // Remove from reviews
+                sampleData.editorReviews.splice(reviewIndex, 1);
+                
+                // Refresh UI
+                populateReviewsList();
+                
+                showNotification(`Story "${review.title}" rejected and returned to draft`, 'warning');
+            }
+        }
+
+        // Request changes
+        function requestChanges(reviewId) {
+            const reviewIndex = sampleData.editorReviews.findIndex(r => r.id === reviewId);
+            if (reviewIndex !== -1) {
+                const review = sampleData.editorReviews[reviewIndex];
+                
+                // Update story status back to internal review
+                const storyIndex = sampleData.stories.findIndex(s => s.id === review.storyId);
+                if (storyIndex !== -1) {
+                    sampleData.stories[storyIndex].status = 'internal-review';
+                }
+                
+                // Remove from reviews
+                sampleData.editorReviews.splice(reviewIndex, 1);
+                
+                // Refresh UI
+                populateReviewsList();
+                
+                showNotification(`Changes requested for "${review.title}". Story returned to internal review.`, 'info');
+            }
+        }
+
+        // Open investigation modal
+        function openInvestigationModal() {
+            currentInvestigationStep = 1;
+            updateInvestigationStep();
+            investigationModal.classList.add('show');
+        }
+
+        // Close investigation modal
+        function closeInvestigationModal() {
+            investigationModal.classList.remove('show');
+            resetInvestigationForm();
+        }
+
+        // Update investigation step
+        function updateInvestigationStep() {
+            const steps = document.querySelectorAll('.step');
+            const connectors = document.querySelectorAll('.step-connector');
+            const formSteps = document.querySelectorAll('.form-step');
+            
+            steps.forEach((step, index) => {
+                if (index < currentInvestigationStep) {
+                    step.classList.add('completed');
+                    step.classList.remove('active');
+                } else if (index === currentInvestigationStep - 1) {
+                    step.classList.add('active');
+                    step.classList.remove('completed');
+                } else {
+                    step.classList.remove('active', 'completed');
+                }
+            });
+            
+            connectors.forEach((connector, index) => {
+                if (index < currentInvestigationStep - 1) {
+                    connector.classList.add('completed');
+                } else {
+                    connector.classList.remove('completed');
+                }
+            });
+            
+            formSteps.forEach((step, index) => {
+                if (index === currentInvestigationStep - 1) {
+                    step.classList.add('active');
+                } else {
+                    step.classList.remove('active');
+                }
+            });
+            
+            // Update buttons
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const createBtn = document.getElementById('createBtn');
+            
+            if (currentInvestigationStep === 1) {
+                prevBtn.style.display = 'none';
+            } else {
+                prevBtn.style.display = 'block';
+            }
+            
+            if (currentInvestigationStep === totalInvestigationSteps) {
+                nextBtn.style.display = 'none';
+                createBtn.style.display = 'block';
+            } else {
+                nextBtn.style.display = 'block';
+                createBtn.style.display = 'none';
+            }
+            
+            // Update next button text
+            if (currentInvestigationStep === 1) {
+                nextBtn.textContent = 'Next: Hypothesis →';
+            } else if (currentInvestigationStep === 2) {
+                nextBtn.textContent = 'Next: Emotional Check →';
+            } else if (currentInvestigationStep === 3) {
+                nextBtn.textContent = 'Next: Review Summary →';
+            }
+        }
+
+        // Previous investigation step
+        function previousInvestigationStep() {
+            if (currentInvestigationStep > 1) {
+                currentInvestigationStep--;
+                updateInvestigationStep();
+            }
+        }
+
+        // Next investigation step
+        function nextInvestigationStep() {
+            if (currentInvestigationStep < totalInvestigationSteps) {
+                // Validate current step
+                if (validateInvestigationStep(currentInvestigationStep)) {
+                    currentInvestigationStep++;
+                    updateInvestigationStep();
+                    
+                    // Update summary on step 4
+                    if (currentInvestigationStep === 4) {
+                        updateInvestigationSummary();
+                    }
+                }
+            }
+        }
+
+        // Validate investigation step
+        function validateInvestigationStep(step) {
+            if (step === 1) {
+                const storyTitle = document.getElementById('storyTitle').value;
+                const origin = document.querySelector('input[name="origin"]:checked');
+                const coverage = document.querySelector('input[name="coverage"]:checked');
+                
+                if (!storyTitle || !origin || !coverage) {
+                    showNotification('Please fill in all required fields.', 'warning');
+                    return false;
+                }
+            } else if (step === 2) {
+                const hypothesis = document.querySelector('#step2 textarea').value;
+                const disprove = document.querySelectorAll('#step2 textarea')[1].value;
+                
+                if (!hypothesis || !disprove) {
+                    showNotification('Please fill in all required fields.', 'warning');
+                    return false;
+                }
+            } else if (step === 3) {
+                const competitor = document.querySelector('input[name="competitor"]:checked');
+                const career = document.querySelector('input[name="career"]:checked');
+                
+                if (!competitor || !career) {
+                    showNotification('Please answer all questions.', 'warning');
+                    return false;
+                }
+            }
+            
+            return true;
+        }
+
+        // Update investigation summary
+        function updateInvestigationSummary() {
+            const storyTitle = document.getElementById('storyTitle').value;
+            const hypothesis = document.querySelector('#step2 textarea').value;
+            const origin = document.querySelector('input[name="origin"]:checked');
+            
+            document.getElementById('summaryTitle').textContent = storyTitle || 'Untitled Investigation';
+            document.getElementById('summaryHypothesis').textContent = hypothesis || 'No hypothesis provided';
+            
+            if (origin) {
+                const originText = origin.nextElementSibling.textContent.trim();
+                document.getElementById('summaryOrigin').textContent = originText;
+            }
+        }
+
+        // Create investigation
+        function createInvestigation() {
+            const acknowledge1 = document.getElementById('acknowledge1').checked;
+            const acknowledge2 = document.getElementById('acknowledge2').checked;
+            
+            if (acknowledge1 && acknowledge2) {
+                // Show loading state
+                const createBtn = document.getElementById('createBtn');
+                createBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Creating...';
+                createBtn.disabled = true;
+                
+                // Simulate creation delay
+                setTimeout(() => {
+                    // Get form data
+                    const storyTitle = document.getElementById('storyTitle').value;
+                    const hypothesis = document.querySelector('#step2 textarea').value;
+                    const description = document.querySelector('#step1 textarea').value;
+                    
+                    // Create new story
+                    const newStory = {
+                        id: sampleData.stories.length + 1,
+                        title: storyTitle,
+                        description: description || hypothesis,
+                        status: 'draft',
+                        author: currentUser.name,
+                        date: new Date().toISOString().split('T')[0],
+                        trustScore: 0,
+                        evidenceCount: 0,
+                        wordCount: 0,
+                        evidence: []
+                    };
+                    
+                    // Add to stories
+                    sampleData.stories.unshift(newStory);
+                    
+                    closeInvestigationModal();
+                    showNotification('Investigation created successfully!', 'success');
+                    
+                    // Navigate to story detail
+                    showStoryDetail(newStory.id);
+                }, 1500);
+            } else {
+                showNotification('Please acknowledge the risks and commit to following verification protocols.', 'warning');
+            }
+        }
+
+        // Reset investigation form
+        function resetInvestigationForm() {
+            // Reset form fields
+            document.getElementById('storyTitle').value = '';
+            document.querySelectorAll('input[type="radio"]').forEach(radio => {
+                radio.checked = false;
+            });
+            document.querySelectorAll('textarea').forEach(textarea => {
+                textarea.value = '';
+            });
+            document.querySelectorAll('input[type="range"]').forEach(range => {
+                range.value = 5;
+            });
+            document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            
+            // Reset to step 1
+            currentInvestigationStep = 1;
+            updateInvestigationStep();
+            
+            // Reset button
+            const createBtn = document.getElementById('createBtn');
+            createBtn.innerHTML = 'Create Investigation';
+            createBtn.disabled = false;
+        }
+
+        // Populate data
+        function populateData() {
+            populatePendingTasks();
+            populateRecentActivity();
+            populateTeamUpdates();
+            populateNotifications();
+        }
+
+        // Populate pending tasks
+        function populatePendingTasks() {
+            const pendingTasksList = document.getElementById('pendingTasksList');
+            pendingTasksList.innerHTML = '';
+            
+            sampleData.tasks.forEach(task => {
+                const taskElement = document.createElement('div');
+                taskElement.className = `task-item task-${task.priority}`;
+                
+                let taskContent = `
+                    <div class="task-title">${task.title}</div>
+                    <div class="task-meta">
+                `;
+                
+                if (task.dueDate) {
+                    taskContent += `Due: ${task.dueDate} • `;
+                }
+                
+                if (task.assignedBy) {
+                    taskContent += `Assigned by: ${task.assignedBy}`;
+                }
+                
+                if (task.status) {
+                    taskContent += `Status: ${task.status}`;
+                }
+                
+                if (task.riskScore) {
+                    taskContent += `Risk Score: ${task.riskScore}/10`;
+                }
+                
+                if (task.received) {
+                    taskContent += `Received: ${task.received}`;
+                }
+                
+                taskContent += `</div>`;
+                
+                if (task.type === 'peer_review') {
+                    taskContent += `<button class="btn-task btn-task-action" onclick="startPeerReview(${task.id})">Start Review</button>`;
+                } else if (task.type === 'verification') {
+                    taskContent += `<button class="btn-task btn-task-action" onclick="showPage('verification')">Complete Verification</button>`;
+                } else if (task.type === 'feedback') {
+                    taskContent += `<button class="btn-task btn-task-action" onclick="viewFeedback(${task.id})">View Feedback</button>`;
+                }
+                
+                taskElement.innerHTML = taskContent;
+                pendingTasksList.appendChild(taskElement);
+            });
+        }
+
+        // Populate recent activity
+        function populateRecentActivity() {
+            const recentActivityList = document.getElementById('recentActivityList');
+            recentActivityList.innerHTML = '';
+            
+            sampleData.activities.forEach(activity => {
+                const activityElement = document.createElement('div');
+                activityElement.className = 'activity-item';
+                activityElement.innerHTML = `
+                    <div class="activity-text">${activity.text}</div>
+                    <div class="activity-time">${activity.time}</div>
+                `;
+                recentActivityList.appendChild(activityElement);
+            });
+        }
+
+        // Populate team updates with thumbs up functionality
+        function populateTeamUpdates() {
+            const teamUpdatesList = document.getElementById('teamUpdatesList');
+            teamUpdatesList.innerHTML = '';
+            
+            sampleData.teamUpdates.forEach(update => {
+                const updateElement = document.createElement('div');
+                updateElement.className = 'team-update-item';
+                updateElement.innerHTML = `
+                    <div class="team-update-header">
+                        <div class="team-update-content">
+                            <div class="team-update-text">${update.text}</div>
+                            ${update.subtext ? `<div class="team-update-subtext">${update.subtext}</div>` : ''}
+                            <div class="team-update-time">${update.time}</div>
+                        </div>
+                        <div class="team-update-actions">
+                            <button class="thumbs-up-btn ${update.liked ? 'liked' : ''}" onclick="toggleThumbsUp(${update.id})">
+                                <i class="bi bi-hand-thumbs-up${update.liked ? '-fill' : ''}"></i>
+                                <span class="thumbs-count">${update.thumbsUp}</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                teamUpdatesList.appendChild(updateElement);
+            });
+        }
+
+        // Toggle thumbs up
+        function toggleThumbsUp(updateId) {
+            const update = sampleData.teamUpdates.find(u => u.id === updateId);
+            if (update) {
+                update.liked = !update.liked;
+                update.thumbsUp += update.liked ? 1 : -1;
+                populateTeamUpdates();
+            }
+        }
+
+        // Populate notifications
+        function populateNotifications() {
+            notificationList.innerHTML = '';
+            
+            // Count unread notifications
+            const unreadCount = sampleData.notifications.filter(n => n.unread).length;
+            notificationBadge.textContent = unreadCount;
+            
+            sampleData.notifications.forEach(notification => {
+                const notificationElement = document.createElement('div');
+                notificationElement.className = `notification-item ${notification.unread ? 'unread' : ''}`;
+                notificationElement.innerHTML = `
+                    <div class="notification-content">${notification.text}</div>
+                    <div class="notification-time">${notification.time}</div>
+                `;
+                notificationList.appendChild(notificationElement);
+            });
+        }
+
+        // Populate stories list
+        function populateStoriesList() {
+            const storiesList = document.getElementById('storiesList');
+            storiesList.innerHTML = '';
+            
+            sampleData.stories.forEach(story => {
+                const storyElement = document.createElement('div');
+                storyElement.className = 'story-card';
+                
+                let statusClass = '';
+                let statusText = '';
+                
+                if (story.status === 'draft') {
+                    statusClass = 'status-draft';
+                    statusText = 'Draft';
+                } else if (story.status === 'internal-review') {
+                    statusClass = 'status-internal-review';
+                    statusText = 'Internal Review';
+                } else if (story.status === 'editor-review') {
+                    statusClass = 'status-review';
+                    statusText = 'Editor Review';
+                } else if (story.status === 'published') {
+                    statusClass = 'status-published';
+                    statusText = 'Published';
+                }
+                
+                storyElement.innerHTML = `
+                    <div class="story-info">
+                        <div class="story-title">${story.title}</div>
+                        <div class="story-meta">
+                            <span><i class="bi bi-person"></i> ${story.author}</span>
+                            <span><i class="bi bi-calendar"></i> ${story.date}</span>
+                            <span><i class="bi bi-file-earmark-text"></i> ${story.wordCount} words</span>
+                            <span><i class="bi bi-folder"></i> ${story.evidenceCount} evidence</span>
+                        </div>
+                        <div class="story-description">${story.description}</div>
+                        <div>
+                            <span class="story-status ${statusClass}">${statusText}</span>
+                            ${story.trustScore > 0 ? `<span class="story-status status-published">Trust Score: ${story.trustScore}/100</span>` : ''}
+                        </div>
+                    </div>
+                    <div class="story-actions">
+                        <button class="btn-story btn-edit" onclick="showStoryDetail(${story.id})">Open</button>
+                        <button class="btn-story btn-view" onclick="viewStory(${story.id})">View</button>
+                    </div>
+                `;
+                
+                storiesList.appendChild(storyElement);
+            });
+        }
+
+        // Populate verification list
+        function populateVerificationList() {
+            const verificationList = document.getElementById('verificationList');
+            verificationList.innerHTML = '';
+            
+            sampleData.verifications.forEach(verification => {
+                const verificationElement = document.createElement('div');
+                verificationElement.className = 'verification-card';
+                
+                let priorityClass = '';
+                let priorityText = '';
+                
+                if (verification.priority === 'high') {
+                    priorityClass = 'priority-high';
+                    priorityText = 'High Priority';
+                } else if (verification.priority === 'medium') {
+                    priorityClass = 'priority-medium';
+                    priorityText = 'Medium Priority';
+                } else if (verification.priority === 'low') {
+                    priorityClass = 'priority-low';
+                    priorityText = 'Low Priority';
+                }
+                
+                verificationElement.innerHTML = `
+                    <div class="verification-header">
+                        <div class="verification-title">${verification.title}</div>
+                        <div class="verification-priority ${priorityClass}">${priorityText}</div>
+                    </div>
+                    <div class="verification-details">
+                        <div class="detail-item">
+                            <div class="detail-label">Submitted By</div>
+                            <div class="detail-value">${verification.submittedBy}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Submitted Date</div>
+                            <div class="detail-value">${verification.submittedDate}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">File Size</div>
+                            <div class="detail-value">${verification.fileSize}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">File Type</div>
+                            <div class="detail-value">${verification.fileType}</div>
+                        </div>
+                    </div>
+                    <div class="verification-progress">
+                        <div class="progress-label">
+                            <span>Verification Progress</span>
+                            <span>${verification.progress}%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${verification.progress}%"></div>
+                        </div>
+                    </div>
+                    <div class="verification-actions">
+                        ${verification.progress < 100 ? 
+                            `<button class="btn-story btn-edit" onclick="continueVerification(${verification.id})">Continue Verification</button>` : 
+                            `<button class="btn-story btn-view" onclick="viewVerification(${verification.id})">View Report</button>`
+                        }
+                        <button class="btn-story btn-view" onclick="viewDetails(${verification.id})">View Details</button>
+                    </div>
+                `;
+                
+                verificationList.appendChild(verificationElement);
+            });
+        }
+
+        // Populate evidence list
+        function populateEvidenceList() {
+            const evidenceList = document.getElementById('evidenceList');
+            evidenceList.innerHTML = '';
+            
+            sampleData.evidence.forEach(evidence => {
+                const evidenceElement = document.createElement('div');
+                evidenceElement.className = 'evidence-item';
+                
+                let statusClass = '';
+                let statusText = '';
+                
+                if (evidence.status === 'unverified') {
+                    statusClass = 'status-unverified';
+                    statusText = 'UNVERIFIED - LOCKED';
+                } else if (evidence.status === 'pending') {
+                    statusClass = 'status-pending';
+                    statusText = 'IN VERIFICATION';
+                } else if (evidence.status === 'verified') {
+                    statusClass = 'status-verified';
+                    statusText = 'VERIFIED';
+                }
+                
+                evidenceElement.innerHTML = `
+                    <div class="evidence-info">
+                        <div class="evidence-icon">
+                            <i class="bi bi-file-earmark-${evidence.type.toLowerCase()}"></i>
+                        </div>
+                        <div class="evidence-details">
+                            <h4>${evidence.name}</h4>
+                            <div class="evidence-meta">${evidence.size} • ${evidence.type} • Uploaded ${evidence.uploadedDate}</div>
+                        </div>
+                    </div>
+                    <div class="evidence-status ${statusClass}">${statusText} ${evidence.riskScore ? `(Risk: ${evidence.riskScore}/10)` : ''}</div>
+                    <div class="evidence-actions">
+                        ${evidence.status === 'unverified' ? 
+                            `<button class="btn-evidence btn-verify" onclick="beginVerification(${evidence.id})">Begin Verification</button>` : 
+                            ''
+                        }
+                        ${evidence.status === 'pending' ? 
+                            `<button class="btn-evidence btn-verify" onclick="continueVerification(${evidence.id})">Continue Verification</button>` : 
+                            ''
+                        }
+                        ${evidence.status === 'verified' ? 
+                            `<button class="btn-evidence btn-view" onclick="viewEvidence(${evidence.id})">View Report</button>` : 
+                            ''
+                        }
+                        <button class="btn-evidence btn-view" onclick="viewFileInfo(${evidence.id})">View File Info</button>
+                    </div>
+                `;
+                
+                evidenceList.appendChild(evidenceElement);
+            });
+        }
+
+        // Populate team workload
+        function populateTeamWorkload() {
+            const teamWorkload = document.getElementById('teamWorkload');
+            teamWorkload.innerHTML = '';
+            
+            sampleData.teamWorkload.forEach(member => {
+                const memberElement = document.createElement('div');
+                memberElement.className = 'task-item';
+                memberElement.innerHTML = `
+                    <div class="task-title">${member.name}</div>
+                    <div class="task-meta">
+                        Active Stories: ${member.activeStories} • Pending Reviews: ${member.pendingReviews}
+                    </div>
+                    <div class="d-flex mt-2">
+                        <div class="progress flex-grow-1 me-2" style="height: 10px;">
+                            <div class="progress-bar" style="width: ${member.activeStories * 20}%"></div>
+                        </div>
+                        <button class="btn-task btn-task-action" onclick="assignStory('${member.name}')">Assign Story</button>
+                    </div>
+                `;
+                teamWorkload.appendChild(memberElement);
+            });
+        }
+
+        // Populate users table
+        function populateUsersTable() {
+            const usersTableBody = document.getElementById('usersTableBody');
+            usersTableBody.innerHTML = '';
+            
+            sampleData.users.forEach(user => {
+                const row = document.createElement('tr');
+                
+                let statusClass = '';
+                let statusText = '';
+                
+                if (user.status === 'active') {
+                    statusClass = 'status-active';
+                    statusText = 'Active';
+                } else if (user.status === 'inactive') {
+                    statusClass = 'status-inactive';
+                    statusText = 'Inactive';
+                }
+                
+                row.innerHTML = `
+                    <td>${user.name}</td>
+                    <td>${user.email}</td>
+                    <td>${user.role}</td>
+                    <td><span class="user-status ${statusClass}">${statusText}</span></td>
+                    <td>
+                        <button class="btn-user btn-edit-user" onclick="editUser(${user.id})">Edit</button>
+                        <button class="btn-user btn-delete-user" onclick="deleteUser(${user.id})">Delete</button>
+                    </td>
+                `;
+                
+                usersTableBody.appendChild(row);
+            });
+        }
+
+        // Close story modal
+        function closeStoryModal() {
+            storyModal.classList.remove('show');
+            currentStoryId = null;
+        }
+
+        // Save story
+        function saveStory() {
+            const title = document.getElementById('storyTitleInput').value;
+            const description = document.getElementById('storyDescriptionInput').value;
+            const status = document.getElementById('storyStatusInput').value;
+            
+            if (currentStoryDetail) {
+                // Update current story
+                currentStoryDetail.title = title;
+                currentStoryDetail.description = description;
+                currentStoryDetail.status = status;
+                
+                // Update in stories array
+                const storyIndex = sampleData.stories.findIndex(s => s.id === currentStoryDetail.id);
+                if (storyIndex !== -1) {
+                    sampleData.stories[storyIndex] = currentStoryDetail;
+                }
+                
+                // Update UI
+                showStoryDetail(currentStoryDetail.id);
+                closeStoryModal();
+                showNotification('Story updated successfully', 'success');
+            }
+        }
+
+        // Edit user
+        function editUser(userId) {
+            currentUserId = userId;
+            const user = sampleData.users.find(u => u.id === userId);
+            
+            if (user) {
+                document.getElementById('userModalTitle').textContent = 'Edit User';
+                document.getElementById('userNameInput').value = user.name;
+                document.getElementById('userEmailInput').value = user.email;
+                document.getElementById('userRoleInput').value = user.role.toLowerCase();
+                document.getElementById('userStatusInput').value = user.status;
+                
+                userModal.classList.add('show');
+            }
+        }
+
+        // Delete user
+        function deleteUser(userId) {
+            if (confirm('Are you sure you want to delete this user?')) {
+                const userIndex = sampleData.users.findIndex(u => u.id === userId);
+                if (userIndex !== -1) {
+                    sampleData.users.splice(userIndex, 1);
+                    populateUsersTable();
+                    showNotification('User deleted successfully', 'success');
+                }
+            }
+        }
+
+        // Close user modal
+        function closeUserModal() {
+            userModal.classList.remove('show');
+            currentUserId = null;
+        }
+
+        // Save user
+        function saveUser() {
+            const name = document.getElementById('userNameInput').value;
+            const email = document.getElementById('userEmailInput').value;
+            const role = document.getElementById('userRoleInput').value;
+            const status = document.getElementById('userStatusInput').value;
+            
+            if (currentUserId) {
+                // Update existing user
+                const userIndex = sampleData.users.findIndex(u => u.id === currentUserId);
+                if (userIndex !== -1) {
+                    sampleData.users[userIndex].name = name;
+                    sampleData.users[userIndex].email = email;
+                    sampleData.users[userIndex].role = role.charAt(0).toUpperCase() + role.slice(1);
+                    sampleData.users[userIndex].status = status;
+                }
+            } else {
+                // Add new user
+                const newUser = {
+                    id: sampleData.users.length + 1,
+                    name: name,
+                    email: email,
+                    role: role.charAt(0).toUpperCase() + role.slice(1),
+                    status: status
+                };
+                sampleData.users.push(newUser);
+            }
+            
+            // Refresh users table
+            populateUsersTable();
+            
+            // Close modal
+            closeUserModal();
+            
+            // Show notification
+            showNotification('User saved successfully', 'success');
+        }
+
+        // Show notification
+        function showNotification(message, type) {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `alert alert-${type} position-fixed top-0 start-50 translate-middle-x mt-3`;
+            notification.style.zIndex = '9999';
+            notification.style.minWidth = '300px';
+            notification.innerHTML = message;
+            
+            // Add to document
+            document.body.appendChild(notification);
+            
+            // Auto remove after 3 seconds
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        // Placeholder functions for button actions
+        function startPeerReview(taskId) {
+            showNotification('Opening peer review interface...', 'info');
+        }
+
+        function viewFeedback(taskId) {
+            showNotification('Loading feedback...', 'info');
+        }
+
+        function viewStory(storyId) {
+            showNotification('Opening story view...', 'info');
+        }
+
+        function continueVerification(verificationId) {
+            showNotification('Opening verification interface...', 'info');
+        }
+
+        function viewVerification(verificationId) {
+            showNotification('Loading verification report...', 'info');
+        }
+
+        function viewDetails(verificationId) {
+            showNotification('Loading verification details...', 'info');
+        }
+
+        function beginVerification(evidenceId) {
+            showNotification('Starting verification process...', 'info');
+        }
+
+        function viewEvidence(evidenceId) {
+            showNotification('Loading evidence report...', 'info');
+        }
+
+        function viewFileInfo(evidenceId) {
+            showNotification('Loading file information...', 'info');
+        }
+
+        function assignStory(memberName) {
+            showNotification(`Opening story assignment for ${memberName}...`, 'info');
+        }
+
+        // Initialize the app
+        init();
+    </script>
+</body>
+</html>
